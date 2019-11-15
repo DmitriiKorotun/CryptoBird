@@ -1,0 +1,96 @@
+﻿<Window x:Class="CryptoBird.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CryptoBird"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="18*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="8*"/>
+        </Grid.ColumnDefinitions>
+        <Menu Margin="0" Grid.ColumnSpan="2" MinHeight="22">
+            <MenuItem Header="STRING__CREATE"/>
+        </Menu>
+        <Expander Header="STRING__MAIL__NAME" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+        <TreeView Height="100" Margin="0,35,0,0" Grid.Row="1" VerticalAlignment="Top">
+            <TreeViewItem Header="STRING_MAIL_NAME">
+                <TreeViewItem Header="STRING_INBOX"/>
+                <TreeViewItem Header="STRING_DRAFTS"/>
+                <TreeViewItem Header="STRING_SENT"/>
+                <TreeViewItem Header="STRING_SPAM"/>
+                <TreeViewItem Header="STRING_BASKET"/>
+            </TreeViewItem>
+        </TreeView>
+        <TreeView Height="100" Margin="0,140,0,0" Grid.Row="1" VerticalAlignment="Top">
+            <TreeViewItem Header="STRING_LOCAL_DIRS">
+                <TreeViewItem Header="STRING_DELETED"/>
+                <TreeViewItem Header="STRING_OUTBOX"/>
+            </TreeViewItem>
+        </TreeView>
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="4*"/>
+            </Grid.RowDefinitions>
+            <DataGrid ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
+                      AutoGenerateColumns="False" Grid.Row="1">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="STRING__SUBJECT" Binding="{Binding Subject}"/>
+                    <DataGridTextColumn Header="STRING__CORRESPONDENTS"/>
+                    <DataGridTextColumn Header="STRING__DATE" Binding="{Binding From.Address}"/>
+                    <DataGridTextColumn Header="Body" Binding="{Binding Body}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+            <WebBrowser local:BrowserBehavior.Html="{Binding BrowserHtml}" Grid.Row="3"/>
+            <Grid Grid.Row="2" Height="100">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2.5*"/>
+                    <RowDefinition Height="8*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
+                    <StackPanel.Resources>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Margin" Value="5,5,5,0"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button Content="STRING__MORE"/>
+                    <Button Content="STRING__DELETE"/>
+                    <Button Content="STRING__SPAM"/>
+                    <Button Content="STRING__ARCHIVE"/>
+                    <Button Content="STRING__FORWARD"/>
+                    <Button Content="STRING__REPLY"/>
+                </StackPanel>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="7*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="STRING__FROM" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                    <Label Content="STRING__SUBJECT" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1"/>
+                    <Label Content="STRING__TO" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="2"/>
+
+                    <Label Content="STRING__FROM__BODY" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label Content="STRING__SUBJECT__BODY" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="1"/>
+                    <Label Content="STRING__TO__BODY" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2"  Grid.Column="1"/>
+
+                    <Label Content="STRING__DATE" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="2"/>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
