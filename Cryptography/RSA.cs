@@ -5,7 +5,7 @@ namespace Cryptography
 {
     public class RSA
     {
-        public byte[] Encrypt(byte[] dataToEncrypt, out string rsaXmlString)
+        public static byte[] Encrypt(byte[] dataToEncrypt, out string rsaXmlString)
         {
             byte[] encryptedData = null;
 
@@ -26,7 +26,7 @@ namespace Cryptography
             }
         }
 
-        public byte[] Encrypt(byte[] dataToEncrypt, string rsaXmlPublicKey)
+        public static byte[] Encrypt(byte[] dataToEncrypt, string rsaXmlPublicKey)
         {
             byte[] encryptedData = null;
 
@@ -47,7 +47,7 @@ namespace Cryptography
             }
         }
 
-        public byte[] Decrypt(byte[] dataToDecrypt, string rsaXmlParams)
+        public static byte[] Decrypt(byte[] dataToDecrypt, string rsaXmlParams)
         {
             byte[] decryptedData = null;
 
@@ -70,7 +70,7 @@ namespace Cryptography
             }
         }
 
-        private byte[] RSAEncrypt(byte[] DataToEncrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
+        private static byte[] RSAEncrypt(byte[] DataToEncrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace Cryptography
 
         }
 
-        private byte[] RSADecrypt(byte[] DataToDecrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
+        private static byte[] RSADecrypt(byte[] DataToDecrypt, RSAParameters RSAKeyInfo, bool DoOAEPPadding)
         {
             try
             {
@@ -142,7 +142,7 @@ namespace Cryptography
         //    return RSA.ToXmlString(true);
         //}
 
-        public string[] GenerateKeyPair()
+        public static string[] GenerateKeyPair()
         {
             RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
 
