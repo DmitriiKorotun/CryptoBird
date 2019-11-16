@@ -35,7 +35,8 @@ namespace EmailAgent
                 // тема письма
                 Subject = subject,
                 // текст письма
-                Body = body
+                Body = body,
+                IsBodyHtml = true
             };
             // адрес smtp-сервера и порт, с которого будем отправлять письмо
             SmtpClient smtp = new SmtpClient(host, port)

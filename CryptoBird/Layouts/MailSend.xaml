@@ -23,7 +23,7 @@
                     <Setter Property="Margin" Value="5,5,5,0"/>
                 </Style>
             </StackPanel.Resources>
-            <Button Content="STRING__SEND"/>
+            <Button Command="{Binding SendMessageCommand}" Content="STRING__SEND"/>
         </StackPanel>
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
@@ -38,15 +38,10 @@
             <Label Content="STRING__FROM" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <Label Content="STRING__TO" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1"/>
             <Label Content="STRING__SUBJECT" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2"/>
-            <TextBox Grid.Column="1" TextWrapping="Wrap"/>
-            <TextBox Grid.Column="1" Grid.Row="1" TextWrapping="Wrap"/>
-            <TextBox Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"/>
+            <TextBox Text="{Binding From}"  Grid.Column="1" TextWrapping="Wrap"/>
+            <TextBox Text="{Binding To}" Grid.Column="1" Grid.Row="1" TextWrapping="Wrap"/>
+            <TextBox Text="{Binding Subject}" Grid.Column="1" Grid.Row="2" TextWrapping="Wrap"/>
         </Grid>
-        <RichTextBox Grid.Row="3">
-            <FlowDocument>
-                <Paragraph>
-                </Paragraph>
-            </FlowDocument>
-        </RichTextBox>
+        <TextBox Text="{Binding Body}" Grid.Row="3" TextWrapping="Wrap" AcceptsReturn="True"/>
     </Grid>
 </Window>

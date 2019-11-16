@@ -16,7 +16,7 @@
             <ColumnDefinition Width="8*"/>
         </Grid.ColumnDefinitions>
         <Menu Margin="0" Grid.ColumnSpan="2" MinHeight="22">
-            <MenuItem Header="STRING__CREATE"/>
+            <MenuItem Header="STRING__CREATE" Command="{Binding OpenChildWindow}"/>
         </Menu>
         <Expander Header="STRING__MAIL__NAME" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top"/>
         <TreeView Height="100" Margin="0,35,0,0" Grid.Row="1" VerticalAlignment="Top">
