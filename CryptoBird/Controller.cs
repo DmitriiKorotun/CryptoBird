@@ -29,12 +29,6 @@ namespace CryptoBird
 
         public void SendEncryptedMessage(string from, string to, string body, string subject, string login, string password, string host, int port)
         {
-            var lol1 = Cryptography.RSA.GenerateKeyPair();
-            var lol2 = Cryptography.RSA.GenerateKeyPair();
-
-            string publicKeys = lol1[0] + lol2[0];
-
-            string encryptedMessage = new MailEncrypter().EncryptMessage(body, publicKeys);
             // Encrypt Message
             // Get public key x2
             // Get hash

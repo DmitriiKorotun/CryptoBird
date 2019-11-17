@@ -24,6 +24,19 @@ namespace CryptoMail
             return Convert.ToBase64String(cryptoBlobBytes);
         }
 
+        public string DecryptMessage(string body, string privateKeys)
+        {           
+            string[] privateKeysArr = SplitKeys(privateKeys);
+
+            byte[] encryptedBlob = Convert.FromBase64String(body);
+
+            CryptoBlob cryptoBlob = ParseEncryptedData(encryptedBlob);
+
+            DataBlob dataBlob = DecryptCryptoBlob(cryptoBlob, privateKeysArr[0], privateKeysArr[1]);
+
+            return Encoding.UTF8.GetString(dataBlob.Body);
+        }
+
         private string[] SplitKeys(string publicKeys)
         {
             const string rsaKeyEnding = "</RSAKeyValue>";
@@ -67,6 +80,47 @@ namespace CryptoMail
             };
 
             return cryptoBlob;
+        }
+
+        private CryptoBlob ParseEncryptedData(byte[] encryptedData)
+        {
+            CryptoBlob cryptoBlob = new CryptoBlob();
+
+            int offset = 0;
+
+            int keyLength = BitConverter.ToInt32(ReadEncryptedBlob(encryptedData, ref offset, 4), 0),
+                IVLength = BitConverter.ToInt32(ReadEncryptedBlob(encryptedData, ref offset, 4), 0),
+                hashLength = BitConverter.ToInt32(ReadEncryptedBlob(encryptedData, ref offset, 4), 0);
+
+            cryptoBlob.EncryptedKey = ReadEncryptedBlob(encryptedData, ref offset, keyLength);
+            cryptoBlob.IV = ReadEncryptedBlob(encryptedData, ref offset, IVLength);
+            cryptoBlob.EncryptedHash = ReadEncryptedBlob(encryptedData, ref offset, hashLength);
+            cryptoBlob.EncryptedData = ReadEncryptedBlob(encryptedData, ref offset, encryptedData.Length - offset);
+
+            return cryptoBlob;
+        }
+
+        private DataBlob DecryptCryptoBlob(CryptoBlob cryptoBlob, string firstPrivateKey, string secondPrivateKey)
+        {
+            var dataBlob = new DataBlob(cryptoBlob)
+            {
+                Key = Cryptography.RSA.Decrypt(cryptoBlob.EncryptedKey, firstPrivateKey),
+                Hash = Cryptography.RSA.Decrypt(cryptoBlob.EncryptedHash, secondPrivateKey)
+            };
+            dataBlob.Body = AES.DecryptStringFromBytes_Aes(cryptoBlob.EncryptedData, dataBlob.Key, dataBlob.IV);
+
+            return dataBlob;
+        }
+
+        private byte[] ReadEncryptedBlob(byte[] dataEncrypted, ref int offset, int arrLength)
+        {
+            byte[] arr = new byte[arrLength];
+
+            Array.Copy(dataEncrypted, offset, arr, 0, arr.Length);
+
+            offset += arr.Length;
+
+            return arr;
         }
     }
 }

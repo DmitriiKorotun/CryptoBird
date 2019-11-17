@@ -40,6 +40,11 @@ namespace CryptoMail.Entities
             IV = iv;
         }
 
+        public DataBlob(CryptoBlob cryptoBlob)
+        {
+            IV = cryptoBlob.IV;
+        }
+
         public override byte[] GetBytes()
         {
             throw new NotImplementedException();
