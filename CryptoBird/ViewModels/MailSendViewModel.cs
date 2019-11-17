@@ -51,7 +51,11 @@ namespace CryptoBird.ViewModels
         {
             var messageSender = new MailSender("smtp.gmail.com", 587);
 
-            messageSender.Send(From, To, Body, Subject, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
+            new Controller().SendEncryptedMessage(From, To, Body, Subject, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
+
+            //new Controller().SendPublicKeyRequest(From, To, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
+
+            //messageSender.Send(From, To, Body, Subject, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
         }
 
         public class RelayCommand<T> : ICommand

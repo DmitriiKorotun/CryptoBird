@@ -40,8 +40,7 @@ namespace CryptoBird.ViewModels
 
         public MainWindowViewModel()
         {
-            var getter = new MailGetter();
-            Messages = new ObservableCollection<MailMessage>(getter.GetAllMessagesTest());
+            Messages = new ObservableCollection<MailMessage>(new Controller().GetMessages());
         }
 
         // Закрытые поля команд
