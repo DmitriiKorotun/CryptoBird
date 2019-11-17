@@ -11,12 +11,12 @@ namespace EmailAgent
 {
     public class MailGetter
     {
-        public List<MailMessage> GetAllMessagesTest()
+        public static List<MailMessage> GetAllMessagesTest()
         {
             return GetAllMessages("imap.gmail.com", 993, UserData.Login, UserData.Password);
         }
 
-        public List<MailMessage> GetAllMessages(string host, int port, string login, string password)
+        public static List<MailMessage> GetAllMessages(string host, int port, string login, string password)
         {
             List<MailMessage> messages;
 
@@ -42,15 +42,44 @@ namespace EmailAgent
                 {
                     var message = inbox.GetMessage(i);
                     Console.WriteLine("Subject: {0}", message.Subject);
-                    var kek = (MimeKit.MailboxAddress)message.From[0];
-                    var kek2 = (MimeKit.MailboxAddress)message.To[0];
-                    messages.Add(new MailMessage(kek.Address, kek2.Address, message.Subject, message.HtmlBody));
+                    var from = (MimeKit.MailboxAddress)message.From[0];
+                    var to = (MimeKit.MailboxAddress)message.To[0];
+                    messages.Add(new MailMessage(from.Address, to.Address, message.Subject, message.HtmlBody));
                 }
 
                 client.Disconnect(true);
             }
 
             return messages;
+        }
+
+        public static bool DeleteMessage(string host, int port, string login, string password, int messageId)
+        {
+            try
+            {
+                using (var client = new ImapClient())
+                {
+                    // For demo-purposes, accept all SSL certificates
+                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                    client.Connect(host, port, true);
+
+                    client.Authenticate(login, password);
+
+                    var inbox = client.Inbox;
+                    inbox.Open(FolderAccess.ReadWrite);
+
+                    inbox.AddFlags(new int[] { messageId }, MessageFlags.Deleted, true);
+
+                    client.Disconnect(true);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
 
     }

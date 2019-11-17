@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using CryptoMail.Entities;
+using CryptoMail.Infrastructure;
 using EmailAgent;
 
 namespace CryptoBird.ViewModels
@@ -24,6 +26,7 @@ namespace CryptoBird.ViewModels
             set
             {
                 SetProperty(ref selectedMessage, value, "SelectedMessage");
+
                 BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
             }
         }
@@ -38,9 +41,22 @@ namespace CryptoBird.ViewModels
             }
         }
 
+        private MailTechnicalPassport _technicalPassport;
+        public MailTechnicalPassport TechnicalPassport
+        {
+            get => _technicalPassport;
+            set => SetProperty(ref _technicalPassport, value, "TechnicalPassport");
+        }
+
         public MainWindowViewModel()
         {
-            Messages = new ObservableCollection<MailMessage>(new Controller().GetMessages());
+            TechnicalPassport = new MailTechnicalPassport();
+            TechnicalPassport.UserCreditentials.Login = UserData.Login;
+            TechnicalPassport.UserCreditentials.Password = UserData.Password;
+            TechnicalPassport.Provider.Host = "imap.gmail.com";
+            TechnicalPassport.Provider.Port = 993;
+
+            Messages = new ObservableCollection<MailMessage>(new CMController().GetAllMessages(TechnicalPassport));
         }
 
         // Закрытые поля команд

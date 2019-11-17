@@ -48,6 +48,18 @@ namespace EmailAgent
             smtp.Send(m);
         }
 
+        public void Send(MailMessage message, string login, string password, string host, int port)
+        {
+            // адрес smtp-сервера и порт, с которого будем отправлять письмо
+            SmtpClient smtp = new SmtpClient(host, port)
+            {
+                // логин и пароль
+                Credentials = new NetworkCredential(login, password),
+                EnableSsl = true
+            };
+            smtp.Send(message);
+        }
+
         private void SetCredentials(string login, string password)
         {
             Smtp.Credentials = new NetworkCredential(login, password);

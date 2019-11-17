@@ -1,4 +1,6 @@
-﻿using EmailAgent;
+﻿using CryptoMail.Entities;
+using CryptoMail.Infrastructure;
+using EmailAgent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,13 @@ namespace CryptoBird.ViewModels
             set => SetProperty(ref _body, value, "Body");
         }
 
+        private MailTechnicalPassport _technicalPassport;
+        public MailTechnicalPassport TechnicalPassport
+        {
+            get => _technicalPassport;
+            set => SetProperty(ref _technicalPassport, value, "TechnicalPassport");
+        }
+
         public ICommand SendMessageCommand { get; }
 
         public MailSendViewModel()
@@ -45,17 +54,17 @@ namespace CryptoBird.ViewModels
             SendMessageCommand = new RelayCommand(SendMessage);
 
             From = UserData.Login;
+
+            TechnicalPassport = new MailTechnicalPassport();
+            TechnicalPassport.UserCreditentials.Login = UserData.Login;
+            TechnicalPassport.UserCreditentials.Password = UserData.Password;
+            TechnicalPassport.Provider.Host = "smtp.gmail.com";
+            TechnicalPassport.Provider.Port = 587;
         }
 
         private void SendMessage()
         {
-            var messageSender = new MailSender("smtp.gmail.com", 587);
-
-            new Controller().SendEncryptedMessage(From, To, Body, Subject, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
-
-            //new Controller().SendPublicKeyRequest(From, To, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
-
-            //messageSender.Send(From, To, Body, Subject, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
+            new CMController().SendMessage(From, To, Body, Subject, TechnicalPassport);
         }
 
         public class RelayCommand<T> : ICommand
