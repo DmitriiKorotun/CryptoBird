@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CryptoBird"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" MinHeight="650" Height="750" Width="1000" MinWidth="900">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -16,7 +16,8 @@
             <ColumnDefinition Width="8*"/>
         </Grid.ColumnDefinitions>
         <Menu Margin="0" Grid.ColumnSpan="2" MinHeight="22">
-            <MenuItem Header="STRING__CREATE" Command="{Binding OpenChildWindow}"/>
+            <MenuItem Header="STRING__CREATE" Command="{Binding OpenMailSendWindow}"/>
+            <MenuItem Header="STRING__SETTINGS" Command="{Binding OpenSettingsWindow}"/>
         </Menu>
         <Expander Header="STRING__MAIL__NAME" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top"/>
         <TreeView Height="100" Margin="0,35,0,0" Grid.Row="1" VerticalAlignment="Top">
@@ -42,12 +43,12 @@
                 <RowDefinition Height="4*"/>
             </Grid.RowDefinitions>
             <DataGrid ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
-                      AutoGenerateColumns="False" Grid.Row="1">
+                      AutoGenerateColumns="False" Grid.Row="1" RowHeight="50">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="STRING__SUBJECT" Binding="{Binding Subject}"/>
                     <DataGridTextColumn Header="STRING__CORRESPONDENTS"/>
                     <DataGridTextColumn Header="STRING__DATE" Binding="{Binding From.Address}"/>
-                    <DataGridTextColumn Header="Body" Binding="{Binding Body}"/>
+                    <DataGridTextColumn Header="Body" Binding="{Binding HtmlBody}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <WebBrowser local:BrowserBehavior.Html="{Binding BrowserHtml}" Grid.Row="3"/>
@@ -65,7 +66,7 @@
                     <Button Content="STRING__MORE"/>
                     <Button Content="STRING__DELETE"/>
                     <Button Content="STRING__SPAM"/>
-                    <Button Content="STRING__ARCHIVE"/>
+                    <Button Command="{Binding DownloadEnquiredCommand}" Content="STRING__DOWNLOAD__ENQURIED"/>
                     <Button Content="STRING__FORWARD"/>
                     <Button Content="STRING__REPLY"/>
                 </StackPanel>

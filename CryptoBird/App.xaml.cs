@@ -22,7 +22,7 @@ namespace CryptoBird
         {
             displayRootRegistry.RegisterWindowType<MainWindowViewModel, MainWindow>();
             displayRootRegistry.RegisterWindowType<MailSendViewModel, MailSend>();
-            //displayRootRegistry.RegisterWindowType<DialogWindowViewModel, DialogWindow>();
+            displayRootRegistry.RegisterWindowType<SettingsViewModel, Settings>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using Cryptography;
 using CryptoMail;
 using EmailAgent;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace CryptoBird
             // Send Message
         }
 
-        public List<MailMessage> GetMessages()
+        public List<MimeMessage> GetMimeMessages()
         {
             var getter = new MailGetter();
 
@@ -48,6 +49,13 @@ namespace CryptoBird
             //}
 
             return messages;
+        }
+
+        public List<MailMessage> GetMailMessages(List<MimeMessage> mimeMessages)
+        {
+            var getter = new MailGetter();
+
+            return getter.CastToMailMessage(mimeMessages);
         }
 
         private void ParseSubject(MailMessage message)
