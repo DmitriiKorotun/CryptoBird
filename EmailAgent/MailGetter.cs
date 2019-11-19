@@ -134,6 +134,35 @@ namespace EmailAgent
             }
         }
 
+        public static bool DeleteMessage(string host, int port, string login, string password, int messageId)
+        {
+            try
+            {
+                using (var client = new ImapClient())
+                {
+                    // For demo-purposes, accept all SSL certificates
+                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                    client.Connect(host, port, true);
+
+                    client.Authenticate(login, password);
+
+                    var inbox = client.Inbox;
+                    inbox.Open(FolderAccess.ReadWrite);
+
+                    inbox.AddFlags(new int[] { messageId }, MessageFlags.Deleted, true);
+
+                    client.Disconnect(true);
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public List<MailMessage> CastToMailMessage(List<MimeMessage> mimeMessages)
         {
             List<MailMessage> messages = new List<MailMessage>(mimeMessages.Count);

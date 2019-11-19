@@ -40,9 +40,7 @@ namespace CryptoBird
 
         public List<MimeMessage> GetMimeMessages()
         {
-            var getter = new MailGetter();
-
-            var messages = getter.GetAllMessagesTest();
+            var messages = MailGetter.GetAllMessagesTest();
 
             //foreach(MailMessage message in messages)
             //{

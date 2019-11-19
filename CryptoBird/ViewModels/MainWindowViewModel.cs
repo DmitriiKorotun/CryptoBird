@@ -9,7 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using CryptoMail;
+using CryptoMail.Entities;
+using CryptoMail.Infrastructure;
 using EmailAgent;
 using MimeKit;
 
@@ -40,8 +41,6 @@ namespace CryptoBird.ViewModels
                 SetProperty(ref browserHtml, value, "BrowserHtml");
             }
         }
-
-
 
         public ICommand DownloadEnquiredCommand { get; }
 

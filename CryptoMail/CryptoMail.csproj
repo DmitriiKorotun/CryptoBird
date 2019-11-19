@@ -47,18 +47,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\CMController.cs" />
+    <Compile Include="Entities\PostEntities.cs" />
     <Compile Include="DownloadManager.cs" />
     <Compile Include="Entities\CryptoBlob.cs" />
     <Compile Include="Entities\Blob.cs" />
     <Compile Include="Entities\DataBlob.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="Infrastructure\IO.cs" />
+    <Compile Include="Infrastructure\Postman.cs" />
     <Compile Include="MailEncrypter.cs" />
+    <Compile Include="Infrastructure\MailParser.cs" />
+    <Compile Include="Infrastructure\NetRepresentative.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cryptography\Cryptography.csproj">
       <Project>{000FE3A4-E2DF-4256-A554-D244FEAAFA4E}</Project>
       <Name>Cryptography</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EmailAgent\EmailAgent.csproj">
+      <Project>{0a132010-42c9-4dd5-8c3a-4a528a65c1ea}</Project>
+      <Name>EmailAgent</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
