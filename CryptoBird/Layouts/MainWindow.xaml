@@ -38,9 +38,9 @@
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="4*"/>
+                <RowDefinition Height="5*"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="4*"/>
+                <RowDefinition Height="5*"/>
             </Grid.RowDefinitions>
             <DataGrid ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
                       AutoGenerateColumns="False" Grid.Row="1" RowHeight="50">

@@ -111,6 +111,29 @@ namespace EmailAgent
             }
         }
 
+        public MimeMessage GetMessage(string host, int port, string login, string password, int messageIndex)
+        {
+            MimeMessage message;
+
+            using (var client = new ImapClient())
+            {
+                // For demo-purposes, accept all SSL certificates
+                client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
+                client.Connect(host, port, true);
+
+                client.Authenticate(login, password);
+
+                client.Inbox.Open(FolderAccess.ReadOnly);
+
+                message = client.Inbox.GetMessage(messageIndex);
+
+                client.Disconnect(true);
+
+                return message;
+            }
+        }
+
         public List<MailMessage> CastToMailMessage(List<MimeMessage> mimeMessages)
         {
             List<MailMessage> messages = new List<MailMessage>(mimeMessages.Count);

@@ -17,17 +17,17 @@ namespace CryptoBird.ViewModels
 {
     class MainWindowViewModel : BasicViewModel, INotifyPropertyChanged
     {
-        private MimeMessage selectedMessage;
+        private MailMessage selectedMessage;
 
-        public ObservableCollection<MimeMessage> Messages { get; set; }
-        public MimeMessage SelectedMessage
+        public ObservableCollection<MailMessage> Messages { get; set; }
+        public MailMessage SelectedMessage
         {
             get { return selectedMessage; }
             set
             {
                 SetProperty(ref selectedMessage, value, "SelectedMessage");
 
-                BrowserHtml = selectedMessage.HtmlBody; // MAYBE NOT HERE
+                BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
             }
         }
 
@@ -47,14 +47,15 @@ namespace CryptoBird.ViewModels
 
         public MainWindowViewModel()
         {
+            var contoller = new Controller();
             DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
 
-            Messages = new ObservableCollection<MimeMessage>(new Controller().GetMimeMessages());
+            Messages = new ObservableCollection<MailMessage>(contoller.GetMailMessages(contoller.GetMimeMessages()));
         }
 
         private void DownloadAttachments()
         {
-            DownloadManager.DownloadAttachments(SelectedMessage);
+            new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage));
         }
 
         // Закрытые поля команд
