@@ -19,16 +19,15 @@
             <MenuItem Header="STRING__CREATE" Command="{Binding OpenMailSendWindow}"/>
             <MenuItem Header="STRING__SETTINGS" Command="{Binding OpenSettingsWindow}"/>
         </Menu>
-        <Expander Header="STRING__MAIL__NAME" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top"/>
-        <TreeView Height="100" Margin="0,35,0,0" Grid.Row="1" VerticalAlignment="Top">
-            <TreeViewItem Header="STRING_MAIL_NAME">
-                <TreeViewItem Header="STRING_INBOX"/>
-                <TreeViewItem Header="STRING_DRAFTS"/>
-                <TreeViewItem Header="STRING_SENT"/>
-                <TreeViewItem Header="STRING_SPAM"/>
-                <TreeViewItem Header="STRING_BASKET"/>
-            </TreeViewItem>
-        </TreeView>
+        <Expander IsExpanded="True" Header="STRING__MAIL__NAME" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top">
+            <ListView ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding Name}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Expander>
         <TreeView Height="100" Margin="0,140,0,0" Grid.Row="1" VerticalAlignment="Top">
             <TreeViewItem Header="STRING_LOCAL_DIRS">
                 <TreeViewItem Header="STRING_DELETED"/>
@@ -43,12 +42,12 @@
                 <RowDefinition Height="5*"/>
             </Grid.RowDefinitions>
             <DataGrid ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
-                      AutoGenerateColumns="False" Grid.Row="1" RowHeight="50">
+                      AutoGenerateColumns="False" Grid.Row="1" RowHeight="50" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="STRING__SUBJECT" Binding="{Binding Subject}"/>
-                    <DataGridTextColumn Header="STRING__CORRESPONDENTS"/>
-                    <DataGridTextColumn Header="STRING__DATE" Binding="{Binding From.Address}"/>
-                    <DataGridTextColumn Header="Body" Binding="{Binding HtmlBody}"/>
+                    <DataGridTextColumn Width="150" Header="STRING__SUBJECT" Binding="{Binding Subject}"/>
+                    <DataGridTextColumn Width="200" Header="STRING__CORRESPONDENTS"/>
+                    <DataGridTextColumn Width="100" Header="STRING__DATE" Binding="{Binding From.Address}"/>
+                    <DataGridTextColumn Width="250" Header="Body" Binding="{Binding Body}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <WebBrowser local:BrowserBehavior.Html="{Binding BrowserHtml}" Grid.Row="3"/>

@@ -11,70 +11,17 @@ using System.Threading.Tasks;
 
 namespace EmailAgent
 {
+    public enum MailSpecialFolder
+    {
+        Inbox,
+        Sent,
+        Drafts,
+        Trash
+    }
+
     public static class MailGetter
     {
-        public static List<MimeMessage> GetAllMessagesTest()
-        {
-            return GetAllMessages("imap.gmail.com", 993, UserData.Login, UserData.Password);
-        }
-
-        //public List<MailMessage> GetAllMessages(string host, int port, string login, string password)
-        //{
-        //    List<MailMessage> messages;
-
-        //    using (var client = new ImapClient())
-        //    {
-        //        // For demo-purposes, accept all SSL certificates
-        //        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-
-        //        client.Connect(host, port, true);
-
-        //        client.Authenticate(login, password);
-
-        //        // The Inbox folder is always available on all IMAP servers...
-        //        var inbox = client.Inbox;
-        //        inbox.Open(FolderAccess.ReadOnly);
-
-        //        messages = new List<MailMessage>(inbox.Count);
-
-        //        Console.WriteLine("Total messages: {0}", inbox.Count);
-        //        Console.WriteLine("Recent messages: {0}", inbox.Recent);
-
-        //        for (int i = 0; i < inbox.Count; i++)
-        //        {
-        //            var message = inbox.GetMessage(i);
-
-        //            Console.WriteLine("Subject: {0}", message.Subject);
-        //            var kek = (MimeKit.MailboxAddress)message.From[0];
-        //            var kek2 = (MimeKit.MailboxAddress)message.To[0];
-
-        //            var ls = new MailMessage(kek.Address, kek2.Address, message.Subject, message.HtmlBody);
-
-        //            for (int j = 0; j < message.Attachments.Count(); ++j)
-        //            {
-        //                var attachment = message.Attachments.ElementAt(j);
-
-        //                attachment.WriteTo()
-        //                using (var stream = new MemoryStream())
-        //                {
-        //                    message.WriteTo(stream);
-
-        //                    ls.Attachments.Add(new Attachment(stream, j.ToString()));
-
-        //                    stream.Close();
-        //                }
-        //            }
-
-        //            messages.Add(ls);
-        //        }
-
-        //        client.Disconnect(true);
-        //    }
-
-        //    return messages;
-        //}
-
-        public static List<MimeMessage> GetAllMessages(string host, int port, string login, string password)
+        public static List<MimeMessage> GetAllMessages(string host, int port, string login, string password, MailSpecialFolder folder)
         {
             List<MimeMessage> messages;
 
@@ -87,18 +34,17 @@ namespace EmailAgent
 
                 client.Authenticate(login, password);
 
-                // The Inbox folder is always available on all IMAP servers...
-                var inbox = client.Inbox;
-                inbox.Open(FolderAccess.ReadOnly);
+                var mailFolder = GetMailFolder(client, folder);
+                mailFolder.Open(FolderAccess.ReadOnly);
 
-                messages = new List<MimeMessage>(inbox.Count);
+                messages = new List<MimeMessage>(mailFolder.Count);
 
-                Console.WriteLine("Total messages: {0}", inbox.Count);
-                Console.WriteLine("Recent messages: {0}", inbox.Recent);
+                Console.WriteLine("Total messages: {0}", mailFolder.Count);
+                Console.WriteLine("Recent messages: {0}", mailFolder.Recent);
 
-                for (int i = 0; i < inbox.Count; i++)
+                for (int i = 0; i < mailFolder.Count; i++)
                 {
-                    var message = inbox.GetMessage(i);
+                    var message = mailFolder.GetMessage(i);
 
                     Console.WriteLine("Subject: {0}", message.Subject);
 
@@ -109,6 +55,32 @@ namespace EmailAgent
 
                 return messages;
             }
+        }
+
+        private static IMailFolder GetMailFolder(ImapClient client, MailSpecialFolder folderToFind)
+        {
+            IMailFolder folder;
+
+            switch(folderToFind)
+            {
+                case MailSpecialFolder.Inbox:
+                    folder = client.Inbox;
+                    break;
+                case MailSpecialFolder.Sent:
+                    folder = client.GetFolder(SpecialFolder.Sent);
+                    break;
+                case MailSpecialFolder.Drafts:
+                    folder = client.GetFolder(SpecialFolder.Drafts);
+                    break;
+                case MailSpecialFolder.Trash:
+                    folder = client.GetFolder(SpecialFolder.Trash);
+                    break;
+                default:
+                    folder = null;
+                    break;
+            }
+
+            return folder;
         }
 
         public static MimeMessage GetMessage(string host, int port, string login, string password, int messageIndex)
@@ -169,15 +141,29 @@ namespace EmailAgent
 
             foreach (MimeMessage mimeMessage in mimeMessages)
             {
-                    var from = (MailboxAddress)mimeMessage.From[0];
-                    var to = (MailboxAddress)mimeMessage.To[0];
+                var from = (MailboxAddress)mimeMessage.From[0];
+                var to = (MailboxAddress)mimeMessage.To[0];
 
-                    var mailMessage = new MailMessage(from.Address, to.Address, mimeMessage.Subject, mimeMessage.HtmlBody);
+                var mailMessage = new MailMessage(from.Address, to.Address, mimeMessage.Subject, mimeMessage.HtmlBody);
 
-                    messages.Add(mailMessage);
+                SetMessageHeaders(mailMessage, mimeMessage);
+
+                messages.Add(mailMessage);
             }
 
             return messages;
+        }
+
+        private static void SetMessageHeaders(MailMessage mailMessage, MimeMessage mimeMessage)
+        {
+            SetMessageHeader(mailMessage, "Uid", mimeMessage.Headers[HeaderId.MessageId]);
+            SetMessageHeader(mailMessage, "Date", mimeMessage.Headers[HeaderId.Date]);
+        }
+
+        private static void SetMessageHeader(MailMessage mailMessage, string mailMessageHeaderName, string mimeMessageHeader)
+        {
+            if (!string.IsNullOrEmpty(mimeMessageHeader))
+                mailMessage.Headers[mailMessageHeaderName] = mimeMessageHeader;
         }
     }
 }

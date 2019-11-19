@@ -145,6 +145,10 @@
       <Project>{000fe3a4-e2df-4256-a554-d244feaafa4e}</Project>
       <Name>Cryptography</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CryptoMail.Local\CryptoMail.Local.csproj">
+      <Project>{E22BF397-39C5-4808-8195-5D3C3D6A28D1}</Project>
+      <Name>CryptoMail.Local</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CryptoMail\CryptoMail.csproj">
       <Project>{9b9c4979-883b-4b2c-975c-431ab5adf400}</Project>
       <Name>CryptoMail</Name>

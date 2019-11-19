@@ -11,16 +11,15 @@ using System.Windows;
 using System.Windows.Input;
 using CryptoMail.Entities;
 using CryptoMail.Infrastructure;
+using CryptoMail.Local;
+using CryptoMail.Local.Serialization;
 using EmailAgent;
-using MimeKit;
 
 namespace CryptoBird.ViewModels
 {
     class MainWindowViewModel : BasicViewModel, INotifyPropertyChanged
     {
         private MailMessage selectedMessage;
-
-        public ObservableCollection<MailMessage> Messages { get; set; }
         public MailMessage SelectedMessage
         {
             get { return selectedMessage; }
@@ -28,9 +27,46 @@ namespace CryptoBird.ViewModels
             {
                 SetProperty(ref selectedMessage, value, "SelectedMessage");
 
-                BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
+                if (!(selectedMessage is null))
+                {
+                    if (!string.IsNullOrEmpty(selectedMessage.Body))
+                        BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
+
+                    CMLocalController.SaveMessages(Messages.ToList(), SelectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+                }
             }
         }
+
+        private ObservableCollection<MailMessage> messages;
+        public ObservableCollection<MailMessage> Messages {
+            get { return messages; }
+            set
+            {
+                messages = value;
+                OnPropertyChanged("Messages");
+            }
+        }
+
+
+        private MailFolder selectedFolder;
+        public MailFolder SelectedFolder
+        {
+            get { return selectedFolder; }
+            set
+            {
+                SetProperty(ref selectedFolder, value, "SelectedFolder");
+
+                var contoller = new CMController();
+                Messages = new ObservableCollection<MailMessage>(
+                    contoller.GetAllMessages(
+                        UserData.Login, UserData.Password, Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                        selectedFolder.FolderType
+                        ));
+            }
+        }
+
+        public ObservableCollection<MailFolder> Folders { get; set; }
+
 
         private string browserHtml;
         public string BrowserHtml
@@ -48,11 +84,9 @@ namespace CryptoBird.ViewModels
         {
             DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
 
-            var contoller = new CMController();
-            Messages = new ObservableCollection<MailMessage>(
-                contoller.GetAllMessages(
-                    UserData.Login, UserData.Password, Properties.MailServerSettings.Default.INPUT_SERVER_NAME, Properties.MailServerSettings.Default.INPUT_PORT
-                    ));
+            Folders = new ObservableCollection<MailFolder>(CMController.GetMailFolders());
+
+            Messages = new ObservableCollection<MailMessage>(CMLocalController.LoadMessages(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME));
         }
 
         private void DownloadAttachments()
