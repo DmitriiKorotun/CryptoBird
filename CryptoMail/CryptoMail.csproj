@@ -31,6 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MailKit">
+      <HintPath>..\CryptoBird\bin\Debug\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\CryptoBird\bin\Debug\MimeKit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +49,7 @@
   <ItemGroup>
     <Compile Include="Infrastructure\CMController.cs" />
     <Compile Include="Entities\PostEntities.cs" />
+    <Compile Include="DownloadManager.cs" />
     <Compile Include="Entities\CryptoBlob.cs" />
     <Compile Include="Entities\Blob.cs" />
     <Compile Include="Entities\DataBlob.cs" />
