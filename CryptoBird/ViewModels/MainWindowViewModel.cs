@@ -9,7 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using CryptoMail;
 using EmailAgent;
+using MimeKit;
 
 namespace CryptoBird.ViewModels
 {
@@ -24,6 +26,7 @@ namespace CryptoBird.ViewModels
             set
             {
                 SetProperty(ref selectedMessage, value, "SelectedMessage");
+
                 BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
             }
         }
@@ -38,45 +41,57 @@ namespace CryptoBird.ViewModels
             }
         }
 
+
+
+        public ICommand DownloadEnquiredCommand { get; }
+
         public MainWindowViewModel()
         {
-            Messages = new ObservableCollection<MailMessage>(new Controller().GetMessages());
+            var contoller = new Controller();
+            DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
+
+            Messages = new ObservableCollection<MailMessage>(contoller.GetMailMessages(contoller.GetMimeMessages()));
+        }
+
+        private void DownloadAttachments()
+        {
+            new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage));
         }
 
         // Закрытые поля команд
-        private ICommand _openChildWindow;
+        private ICommand _openMailSendWindow;
 
-        private ICommand _openDialogWindow;
+        private ICommand _openSettingsWindow;
 
         // Свойства доступные только для чтения для обращения к командам и их инициализации
-        public ICommand OpenChildWindow
+        public ICommand OpenMailSendWindow
         {
             get
             {
-                if (_openChildWindow == null)
+                if (_openMailSendWindow == null)
                 {
-                    _openChildWindow = new OpenChildWindowCommand(this);
+                    _openMailSendWindow = new OpenMailSendWindowCommand(this);
                 }
-                return _openChildWindow;
+                return _openMailSendWindow;
             }
         }
-        public ICommand OpenDialogWindow
+        public ICommand OpenSettingsWindow
         {
             get
             {
-                if (_openDialogWindow == null)
+                if (_openSettingsWindow == null)
                 {
-                    _openDialogWindow = new OpenDialogWindowCommand(this);
+                    _openSettingsWindow = new OpenSettingsWindowCommand(this);
                 }
-                return _openDialogWindow;
+                return _openSettingsWindow;
             }
         }
 
-        abstract class MyCommand : ICommand
+        abstract class WindowCommand : ICommand
         {
             protected MainWindowViewModel _mainWindowVeiwModel;
 
-            public MyCommand(MainWindowViewModel mainWindowVeiwModel)
+            public WindowCommand(MainWindowViewModel mainWindowVeiwModel)
             {
                 _mainWindowVeiwModel = mainWindowVeiwModel;
             }
@@ -88,9 +103,9 @@ namespace CryptoBird.ViewModels
             public abstract void Execute(object parameter);
         }
 
-        class OpenChildWindowCommand : MyCommand
+        class OpenMailSendWindowCommand : WindowCommand
         {
-            public OpenChildWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
+            public OpenMailSendWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
             {
             }
             public override bool CanExecute(object parameter)
@@ -101,14 +116,14 @@ namespace CryptoBird.ViewModels
             {
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
 
-                var otherWindowViewModel = new MailSendViewModel();
-                await displayRootRegistry.ShowModalPresentation(otherWindowViewModel);
+                var mailSendViewModel = new MailSendViewModel();
+                await displayRootRegistry.ShowModalPresentation(mailSendViewModel);
             }
         }
 
-        class OpenDialogWindowCommand : MyCommand
+        class OpenSettingsWindowCommand : WindowCommand
         {
-            public OpenDialogWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
+            public OpenSettingsWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
             {
             }
             public override bool CanExecute(object parameter)
@@ -119,9 +134,8 @@ namespace CryptoBird.ViewModels
             {
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
 
-                var dialogWindowViewModel = new DialogWindowViewModel();
-                await displayRootRegistry.ShowModalPresentation(dialogWindowViewModel);
-
+                var settingsWindowViewModel = new SettingsViewModel();
+                await displayRootRegistry.ShowModalPresentation(settingsWindowViewModel);
             }
         }
     }
