@@ -28,9 +28,11 @@ namespace CryptoMail.Infrastructure
             Postman.DeliverMessage(message, mailPassport);
         }
 
-        public List<MailMessage> GetAllMessages(MailTechnicalPassport mailPassport)
+        public List<MailMessage> GetAllMessages(string login, string password, string host, int port)
         {
-            var messages = MailGetter.GetAllMessagesTest();
+            MailTechnicalPassport mailPassport = CreateMailPassport(login, password, host, port);
+
+            var messages = MailGetter.CastToMailMessage(MailGetter.GetAllMessagesTest());
 
             for (int i = 0; i < messages.Count; ++i)
             {
@@ -49,6 +51,18 @@ namespace CryptoMail.Infrastructure
             }
 
             return messages;
+        }
+
+        private MailTechnicalPassport CreateMailPassport(string login, string password, string host, int port)
+        {
+            MailTechnicalPassport mailPassport = new MailTechnicalPassport();
+
+            mailPassport.UserCreditentials.Login = login;
+            mailPassport.UserCreditentials.Password = password;
+            mailPassport.Provider.Host = host;
+            mailPassport.Provider.Port = port;
+
+            return mailPassport;
         }
 
         private void PerformRequest(MailParser.Token token, MailMessage message, MailTechnicalPassport mailPassport)

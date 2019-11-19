@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace EmailAgent
 {
-    public class MailGetter
+    public static class MailGetter
     {
-        public List<MimeMessage> GetAllMessagesTest()
+        public static List<MimeMessage> GetAllMessagesTest()
         {
             return GetAllMessages("imap.gmail.com", 993, UserData.Login, UserData.Password);
         }
@@ -74,7 +74,7 @@ namespace EmailAgent
         //    return messages;
         //}
 
-        public List<MimeMessage> GetAllMessages(string host, int port, string login, string password)
+        public static List<MimeMessage> GetAllMessages(string host, int port, string login, string password)
         {
             List<MimeMessage> messages;
 
@@ -111,7 +111,7 @@ namespace EmailAgent
             }
         }
 
-        public MimeMessage GetMessage(string host, int port, string login, string password, int messageIndex)
+        public static MimeMessage GetMessage(string host, int port, string login, string password, int messageIndex)
         {
             MimeMessage message;
 
@@ -163,7 +163,7 @@ namespace EmailAgent
             return true;
         }
 
-        public List<MailMessage> CastToMailMessage(List<MimeMessage> mimeMessages)
+        public static List<MailMessage> CastToMailMessage(List<MimeMessage> mimeMessages)
         {
             List<MailMessage> messages = new List<MailMessage>(mimeMessages.Count);
 

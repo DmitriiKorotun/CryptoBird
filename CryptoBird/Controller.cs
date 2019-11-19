@@ -50,13 +50,6 @@ namespace CryptoBird
             return messages;
         }
 
-        public List<MailMessage> GetMailMessages(List<MimeMessage> mimeMessages)
-        {
-            var getter = new MailGetter();
-
-            return getter.CastToMailMessage(mimeMessages);
-        }
-
         private void ParseSubject(MailMessage message)
         {
             switch (message.Subject)
@@ -80,9 +73,7 @@ namespace CryptoBird
 
         public void DownloadAttachments(int messageIndex)
         {
-            var mailGetter = new MailGetter();
-
-            var mimeMessage = mailGetter.GetMessage(Properties.MailServerSettings.Default.INPUT_SERVER_NAME, Properties.MailServerSettings.Default.INPUT_PORT,
+            var mimeMessage = MailGetter.GetMessage(Properties.MailServerSettings.Default.INPUT_SERVER_NAME, Properties.MailServerSettings.Default.INPUT_PORT,
                 UserData.Login, UserData.Password, messageIndex);
 
             DownloadManager.DownloadAttachments(mimeMessage);

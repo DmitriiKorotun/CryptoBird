@@ -46,10 +46,13 @@ namespace CryptoBird.ViewModels
 
         public MainWindowViewModel()
         {
-            var contoller = new Controller();
             DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
 
-            Messages = new ObservableCollection<MailMessage>(contoller.GetMailMessages(contoller.GetMimeMessages()));
+            var contoller = new CMController();
+            Messages = new ObservableCollection<MailMessage>(
+                contoller.GetAllMessages(
+                    UserData.Login, UserData.Password, Properties.MailServerSettings.Default.INPUT_SERVER_NAME, Properties.MailServerSettings.Default.INPUT_PORT
+                    ));
         }
 
         private void DownloadAttachments()
