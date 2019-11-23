@@ -1,4 +1,5 @@
 ﻿using CryptoMail.Local.Serialization;
+using EmailAgent.Entities.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,17 @@ namespace CryptoMail.Local
             return messages;
         }
 
+        public FolderCache LoadFolder(string filename)
+        {
+            FolderCache folder;
+
+            var deserializedFolder = MailDeserializer.DeserializeFolder(filename);
+
+            folder = CastToFolderCache(deserializedFolder);
+
+            return folder;
+        }
+
         public void SaveMessage(MailMessage message, string filename)
         {
             var serializableMessage = SerializableMessage.CreateFromMailMessage(message);
@@ -44,6 +56,13 @@ namespace CryptoMail.Local
             var serializableMessages = SerializableMessages.CreateFromMailMessages(messages);
 
             MailSerializer.SaveMessages(serializableMessages, filename);
+        }
+
+        public void SaveFolder(FolderCache folder, string filename)
+        {
+            var serializableFolder = SerialazableFolder.CreateFromFolderCache(folder);
+
+            MailSerializer.SaveFolder(serializableFolder, filename);
         }
 
         private MailMessage CastToMailMessage(SerializableMessage serializableMessage)
@@ -74,6 +93,15 @@ namespace CryptoMail.Local
             }
 
             return messages;
+        }
+
+        private FolderCache CastToFolderCache(SerialazableFolder serializableFolder)
+        {
+            FolderCache folder = new FolderCache(
+                serializableFolder.Messages, serializableFolder.UidValidity, serializableFolder.HighestKnownModSeq
+                );
+
+            return folder;
         }
     }
 }

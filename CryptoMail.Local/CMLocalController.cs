@@ -1,4 +1,5 @@
 ﻿using EmailAgent;
+using EmailAgent.Entities.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,16 @@ namespace CryptoMail.Local
             messageIO.SaveMessages(messages, filename);
         }
 
+        public static void SaveFolder(FolderCache folderCache, MailSpecialFolder folder, string currentUser)
+        {
+            string dirname = CreateMessagesDir(folder, currentUser),
+                filename = GenerateFilename(folder.ToString(), dirname);
+
+            IMessageIO messageIO = new MessageIO();
+
+            messageIO.SaveFolder(folderCache, filename);
+        }
+
         public static List<MailMessage> LoadMessages(MailSpecialFolder folder, string currentUser)
         {
             string dirname = CreateMessagesDir(folder, currentUser),
@@ -30,6 +41,15 @@ namespace CryptoMail.Local
             return messageIO.LoadMessages(filename);
         }
 
+        public static FolderCache LoadFolder(MailSpecialFolder folder, string currentUser)
+        {
+            string dirname = CreateMessagesDir(folder, currentUser),
+                filename = GenerateFilename(folder.ToString(), dirname);
+
+            IMessageIO messageIO = new MessageIO();
+
+            return messageIO.LoadFolder(filename);
+        }
 
         private static string GenerateFilename(MailMessage message, string dirName)
         {

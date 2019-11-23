@@ -39,6 +39,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,9 +52,9 @@
     <Compile Include="Infrastructure\CMController.cs" />
     <Compile Include="Entities\PostEntities.cs" />
     <Compile Include="DownloadManager.cs" />
-    <Compile Include="Entities\CryptoBlob.cs" />
-    <Compile Include="Entities\Blob.cs" />
-    <Compile Include="Entities\DataBlob.cs" />
+    <Compile Include="Entities\Blobs\CryptoBlob.cs" />
+    <Compile Include="Entities\Blobs\Blob.cs" />
+    <Compile Include="Entities\Blobs\DataBlob.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Infrastructure\IO.cs" />
     <Compile Include="Infrastructure\Postman.cs" />

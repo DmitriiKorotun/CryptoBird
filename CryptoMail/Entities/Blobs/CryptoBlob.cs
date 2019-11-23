@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail.Entities
+namespace CryptoMail.Entities.Blobs
 {
     class CryptoBlob : Blob
     {

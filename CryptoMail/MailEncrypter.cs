@@ -1,5 +1,6 @@
 ﻿using Cryptography;
 using CryptoMail.Entities;
+using CryptoMail.Entities.Blobs;
 using System;
 using System.Collections.Generic;
 using System.Linq;

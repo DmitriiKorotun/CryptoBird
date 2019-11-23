@@ -14,6 +14,7 @@ using CryptoMail.Infrastructure;
 using CryptoMail.Local;
 using CryptoMail.Local.Serialization;
 using EmailAgent;
+using EmailAgent.Entities.Caching;
 
 namespace CryptoBird.ViewModels
 {
@@ -57,11 +58,30 @@ namespace CryptoBird.ViewModels
                 SetProperty(ref selectedFolder, value, "SelectedFolder");
 
                 var contoller = new CMController();
-                Messages = new ObservableCollection<MailMessage>(
-                    contoller.GetAllMessages(
-                        UserData.Login, UserData.Password, Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
-                        selectedFolder.FolderType
-                        ));
+
+                var testSync = new Folder();
+
+                testSync.TestOfSyncing(
+                    Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                    UserData.Login, UserData.Password, selectedFolder.FolderType
+                    );
+
+                CMLocalController.SaveFolder(testSync.FolderCache as FolderCache, selectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+
+                var loadedCache = CMLocalController.LoadFolder(selectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+
+                testSync.FolderCache = loadedCache;
+
+                testSync.TestOfSyncing(
+    Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+    UserData.Login, UserData.Password, selectedFolder.FolderType
+    );
+
+                //Messages = new ObservableCollection<MailMessage>(
+                //    contoller.GetAllMessages(
+                //        UserData.Login, UserData.Password, Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                //        selectedFolder.FolderType
+                //        ));
             }
         }
 
