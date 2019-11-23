@@ -1,5 +1,6 @@
-﻿using CryptoMail.Entities;
+﻿using CryptoMail.Network.Entities;
 using EmailAgent;
+using EmailAgent.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail.Infrastructure
+namespace CryptoMail.Network.Infrastructure
 {
     public class CMController
     {
@@ -51,6 +52,13 @@ namespace CryptoMail.Infrastructure
             }
 
             return messages;
+        }
+
+        private static void UpdateFolder(string login, string password, string host, int port, MailFolder folderType)
+        {
+            var folder = new Folder(folderType.FolderType);
+
+            folder.UpdateFolder(host, port, login, password);
         }
 
         public static List<MailFolder> GetMailFolders()

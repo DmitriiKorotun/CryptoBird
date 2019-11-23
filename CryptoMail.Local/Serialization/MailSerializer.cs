@@ -37,13 +37,13 @@ namespace CryptoMail.Local.Serialization
             }
         }
 
-        public static void SaveFolder(SerialazableFolder folderCache, string filename)
+        public static void SaveFolder(SerializableFolder folder, string filename)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(SerialazableFolder));
+            XmlSerializer serializer = new XmlSerializer(typeof(SerializableFolder));
 
             using (TextWriter writer = new StreamWriter(filename))
             {
-                serializer.Serialize(writer, folderCache);
+                serializer.Serialize(writer, folder);
 
                 writer.Close();
             }

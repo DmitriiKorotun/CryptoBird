@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailAgent.Tests", "EmailAg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cryptography", "Cryptography\Cryptography.csproj", "{000FE3A4-E2DF-4256-A554-D244FEAAFA4E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoMail", "CryptoMail\CryptoMail.csproj", "{9B9C4979-883B-4B2C-975C-431AB5ADF400}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoMail.Network", "CryptoMail.Network\CryptoMail.Network.csproj", "{9B9C4979-883B-4B2C-975C-431AB5ADF400}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoMail.Local", "CryptoMail.Local\CryptoMail.Local.csproj", "{E22BF397-39C5-4808-8195-5D3C3D6A28D1}"
 EndProject

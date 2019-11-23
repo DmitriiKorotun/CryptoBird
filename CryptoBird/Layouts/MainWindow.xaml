@@ -84,11 +84,11 @@
                     <Label Content="STRING__SUBJECT" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1"/>
                     <Label Content="STRING__TO" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="2"/>
 
-                    <Label Content="STRING__FROM__BODY" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
-                    <Label Content="STRING__SUBJECT__BODY" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="1"/>
+                    <Label Content="{Binding SelectedMessage.From.Address}"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label Content="{Binding SelectedMessage.Subject}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="1"/>
                     <Label Content="STRING__TO__BODY" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2"  Grid.Column="1"/>
 
-                    <Label Content="STRING__DATE" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="2"/>
+                    <Label Content="{Binding SelectedMessageDate}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="2"/>
                 </Grid>
             </Grid>
         </Grid>

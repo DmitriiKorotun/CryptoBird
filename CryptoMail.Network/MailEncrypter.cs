@@ -1,6 +1,6 @@
 ﻿using Cryptography;
-using CryptoMail.Entities;
-using CryptoMail.Entities.Blobs;
+using CryptoMail.Network.Entities;
+using CryptoMail.Network.Entities.Blobs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail
+namespace CryptoMail.Network
 {
     public class MailEncrypter
     {

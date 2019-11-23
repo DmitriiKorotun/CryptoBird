@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail.Entities
+namespace CryptoMail.Network.Entities
 {
     public class MailTechnicalPassport
     {

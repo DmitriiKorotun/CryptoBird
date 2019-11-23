@@ -1,6 +1,7 @@
 ﻿using Cryptography;
-using CryptoMail;
+using CryptoMail.Network;
 using EmailAgent;
+using EmailAgent.Entities;
 using MailKit.Net.Imap;
 using MimeKit;
 using System;

@@ -44,15 +44,15 @@ namespace CryptoMail.Local.Serialization
             return messages;
         }
 
-        public static SerialazableFolder DeserializeFolder(string filename)
+        public static SerializableFolder DeserializeFolder(string filename)
         {
-            SerialazableFolder folder;
+            SerializableFolder folder;
 
-            XmlSerializer serializer = new XmlSerializer(typeof(SerialazableFolder));
+            XmlSerializer serializer = new XmlSerializer(typeof(SerializableFolder));
 
             using (StreamReader reader = new StreamReader(filename))
             {
-                folder = (SerialazableFolder)serializer.Deserialize(reader);
+                folder = (SerializableFolder)serializer.Deserialize(reader);
 
                 reader.Close();
             }

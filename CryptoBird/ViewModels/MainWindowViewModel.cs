@@ -9,12 +9,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using CryptoMail.Entities;
-using CryptoMail.Infrastructure;
+using CryptoMail.Network;
+using CryptoMail.Network.Infrastructure;
 using CryptoMail.Local;
 using CryptoMail.Local.Serialization;
 using EmailAgent;
 using EmailAgent.Entities.Caching;
+using EmailAgent.Entities;
+using CryptoMail.Network.Entities;
 
 namespace CryptoBird.ViewModels
 {
@@ -33,10 +35,23 @@ namespace CryptoBird.ViewModels
                     if (!string.IsNullOrEmpty(selectedMessage.Body))
                         BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
 
-                    CMLocalController.SaveMessages(Messages.ToList(), SelectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+                    //CMLocalController.SaveMessages(Messages.ToList(), SelectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+
+                    SelectedMessageDate = SelectedMessage.Headers["Date"];
                 }
             }
         }
+
+        private string selectedMessageDate;
+        public string SelectedMessageDate
+        {
+            get { return selectedMessageDate; }
+            set
+            {
+                SetProperty(ref selectedMessageDate, value, "SelectedMessageDate");
+            }
+        }
+
 
         private ObservableCollection<MailMessage> messages;
         public ObservableCollection<MailMessage> Messages {
@@ -59,23 +74,17 @@ namespace CryptoBird.ViewModels
 
                 var contoller = new CMController();
 
-                var testSync = new Folder();
+                var folderInbox = FolderManager.CreateFolder(MailSpecialFolder.Inbox);
 
-                testSync.TestOfSyncing(
+                FolderManager.UpdateFolder(
+                    Properties.MailServerSettings.Default.USERNAME, UserData.Password,
                     Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
-                    UserData.Login, UserData.Password, selectedFolder.FolderType
+                    folderInbox
                     );
 
-                CMLocalController.SaveFolder(testSync.FolderCache as FolderCache, selectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+                FolderManager.SaveFolder(folderInbox, Properties.MailServerSettings.Default.USERNAME);
 
-                var loadedCache = CMLocalController.LoadFolder(selectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
-
-                testSync.FolderCache = loadedCache;
-
-                testSync.TestOfSyncing(
-    Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
-    UserData.Login, UserData.Password, selectedFolder.FolderType
-    );
+                var loadedFolder = FolderManager.LoadFolder(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME);
 
                 //Messages = new ObservableCollection<MailMessage>(
                 //    contoller.GetAllMessages(

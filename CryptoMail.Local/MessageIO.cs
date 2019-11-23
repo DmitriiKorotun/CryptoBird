@@ -1,11 +1,14 @@
 ﻿using CryptoMail.Local.Serialization;
+using EmailAgent.Entities;
 using EmailAgent.Entities.Caching;
+using MailKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using static CryptoMail.Local.Serialization.SerializableFolderCache;
 
 namespace CryptoMail.Local
 {
@@ -33,13 +36,13 @@ namespace CryptoMail.Local
             return messages;
         }
 
-        public FolderCache LoadFolder(string filename)
+        public Folder LoadFolder(string filename)
         {
-            FolderCache folder;
+            Folder folder;
 
             var deserializedFolder = MailDeserializer.DeserializeFolder(filename);
 
-            folder = CastToFolderCache(deserializedFolder);
+            folder = CastToFolder(deserializedFolder);
 
             return folder;
         }
@@ -58,9 +61,9 @@ namespace CryptoMail.Local
             MailSerializer.SaveMessages(serializableMessages, filename);
         }
 
-        public void SaveFolder(FolderCache folder, string filename)
+        public void SaveFolder(Folder folder, string filename)
         {
-            var serializableFolder = SerialazableFolder.CreateFromFolderCache(folder);
+            var serializableFolder = SerializableFolder.CreateFromFolder(folder);
 
             MailSerializer.SaveFolder(serializableFolder, filename);
         }
@@ -95,13 +98,55 @@ namespace CryptoMail.Local
             return messages;
         }
 
-        private FolderCache CastToFolderCache(SerialazableFolder serializableFolder)
+        private Folder CastToFolder(SerializableFolder serializableFolder)
+        {
+            Folder folder;
+
+            IFolderCache folderCache = CastToFolderCache(serializableFolder.FolderCache);
+
+            folder = new Folder(serializableFolder.FolderType, folderCache);
+
+            return folder;
+        }
+
+        private IFolderCache CastToFolderCache(SerializableFolderCache serializableFolder)
         {
             FolderCache folder = new FolderCache(
-                serializableFolder.Messages, serializableFolder.UidValidity, serializableFolder.HighestKnownModSeq
+                CastToIMessageListDictionary(serializableFolder.Messages), serializableFolder.UidValidity, serializableFolder.HighestKnownModSeq
                 );
 
             return folder;
+        }
+
+        private List<KeyValuePair<string, object>> CastToIMessageListDictionary(List<SerializableKeyValuePair<string, SerializableMessageSummary>> serializableMessages)
+        {
+            List<KeyValuePair<string, object>> messagesSummary = new List<KeyValuePair<string, object>>(serializableMessages.Count);
+
+            foreach(SerializableKeyValuePair<string, SerializableMessageSummary> serializableMessage in serializableMessages)
+            {
+                var messageSummary = CastToIMessageSummary(serializableMessage.Value);
+
+                messagesSummary.Add(new KeyValuePair<string, object>(serializableMessage.Key, messageSummary));
+            }
+
+            return messagesSummary;
+        }
+
+        private IMessageSummary CastToIMessageSummary(SerializableMessageSummary serializableMessage)
+        {
+            IMessageSummary iMessageSummary = new MessageSummary(serializableMessage.Index);
+
+            if (iMessageSummary is MessageSummary messageSummary)
+            {
+                messageSummary.Envelope = new Envelope
+                {
+                    Subject = serializableMessage.Subject
+                };
+
+                messageSummary.UniqueId = serializableMessage.UniqueId;
+            }
+
+            return iMessageSummary;
         }
     }
 }
