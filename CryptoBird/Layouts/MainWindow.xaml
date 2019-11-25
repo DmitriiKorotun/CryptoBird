@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CryptoBird"
+        xmlns:properties="clr-namespace:CryptoBird.Properties"
+        xmlns:localization="clr-namespace:CryptoBird.Localization"
         mc:Ignorable="d"
-        Title="MainWindow" MinHeight="650" Height="750" Width="1000" MinWidth="900">
+        Title="CryptoBird" MinHeight="650" Height="750" Width="1000" MinWidth="900">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -16,10 +18,10 @@
             <ColumnDefinition Width="8*"/>
         </Grid.ColumnDefinitions>
         <Menu Margin="0" Grid.ColumnSpan="2" MinHeight="22">
-            <MenuItem Header="STRING__CREATE" Command="{Binding OpenMailSendWindow}"/>
-            <MenuItem Header="STRING__SETTINGS" Command="{Binding OpenSettingsWindow}"/>
+            <MenuItem Header="{x:Static localization:Strings.Create}" Command="{Binding OpenMailSendWindow}"/>
+            <MenuItem Header="{x:Static localization:Strings.Settings}" Command="{Binding OpenSettingsWindow}"/>
         </Menu>
-        <Expander IsExpanded="True" Header="STRING__MAIL__NAME" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top">
+        <Expander IsExpanded="True" Header="{Binding Source={x:Static properties:PublicOnForm.Default}, Path=USERNAME_INPUT}" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top">
             <ListView ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder}">
                 <ListView.View>
                     <GridView>
@@ -37,37 +39,39 @@
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="5*"/>
+                <RowDefinition Height="10*"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="5*"/>
+                <RowDefinition Height="10*"/>
             </Grid.RowDefinitions>
             <DataGrid ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
                       AutoGenerateColumns="False" Grid.Row="1" RowHeight="50" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Width="275" Header="STRING__SUBJECT" Binding="{Binding Subject}"/>
-                    <DataGridTextColumn Width="250" Header="STRING__CORRESPONDENTS" Binding="{Binding From}"/>
-                    <DataGridTextColumn Width="125" Header="STRING__DATE" Binding="{Binding Date}"/>
-                    <DataGridTextColumn Width="250" Header="STRING__ATTACHMENT" Binding="{Binding HasAttachments}"/>
+                    <DataGridTextColumn Width="275" Header="{x:Static localization:Strings.Subject}" Binding="{Binding Subject}"/>
+                    <DataGridTextColumn Width="250" Header="{x:Static localization:Strings.Correspondents}" Binding="{Binding From}"/>
+                    <DataGridTextColumn Width="125" Header="{x:Static localization:Strings.Date}" Binding="{Binding Date}"/>
+                    <DataGridTextColumn Width="250" Header="{x:Static localization:Strings.HasAttachments}" Binding="{Binding HasAttachments}"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <WebBrowser local:BrowserBehavior.Html="{Binding BrowserHtml}" Grid.Row="3"/>
+            <WebBrowser local:BrowserBehavior.Html="{Binding BrowserHtml}" Grid.Row="3"
+                        Margin="0, 5, 0, 10"/>
             <Grid Grid.Row="2" Height="100">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="2.5*"/>
+                    <RowDefinition Height="3*"/>
                     <RowDefinition Height="8*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft">
                     <StackPanel.Resources>
                         <Style TargetType="{x:Type Button}">
                             <Setter Property="Margin" Value="5,5,5,0"/>
+                            <Setter Property="Padding" Value="5, 0"/>
                         </Style>
                     </StackPanel.Resources>
-                    <Button Content="STRING__MORE"/>
-                    <Button Content="STRING__DELETE"/>
-                    <Button Content="STRING__SPAM"/>
-                    <Button Command="{Binding DownloadEnquiredCommand}" Content="STRING__DOWNLOAD__ENQURIED"/>
-                    <Button Content="STRING__FORWARD"/>
-                    <Button Content="STRING__REPLY"/>
+                    <Button Content="{x:Static localization:Strings.More}"/>
+                    <Button Content="{x:Static localization:Strings.Delete}"/>
+                    <Button Content="{x:Static localization:Strings.Spam}"/>
+                    <Button Command="{Binding DownloadEnquiredCommand}" Content="{x:Static localization:Strings.DownloadAttachments}"/>
+                    <Button Content="{x:Static localization:Strings.Forward}"/>
+                    <Button Content="{x:Static localization:Strings.Reply}"/>
                 </StackPanel>
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
@@ -80,9 +84,9 @@
                         <ColumnDefinition Width="7*"/>
                         <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Content="STRING__FROM" HorizontalAlignment="Right" VerticalAlignment="Top"/>
-                    <Label Content="STRING__SUBJECT" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1"/>
-                    <Label Content="STRING__TO" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="2"/>
+                    <Label Content="{x:Static localization:Strings.From}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                    <Label Content="{x:Static localization:Strings.Subject}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1"/>
+                    <Label Content="{x:Static localization:Strings.To}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="2"/>
 
                     <Label Content="{Binding SelectedMessage.From}"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
                     <Label Content="{Binding SelectedMessage.Subject}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="1"/>
