@@ -26,12 +26,12 @@ namespace CryptoBird.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("imap.gmail.com")]
-        public string INPUT_SERVER_NAME {
+        public string INPUT_HOST {
             get {
-                return ((string)(this["INPUT_SERVER_NAME"]));
+                return ((string)(this["INPUT_HOST"]));
             }
             set {
-                this["INPUT_SERVER_NAME"] = value;
+                this["INPUT_HOST"] = value;
             }
         }
         
@@ -62,12 +62,12 @@ namespace CryptoBird.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("smtp.gmail.com")]
-        public string OUTPUT_SERVER_NAME {
+        public string OUTPUT_HOST {
             get {
-                return ((string)(this["OUTPUT_SERVER_NAME"]));
+                return ((string)(this["OUTPUT_HOST"]));
             }
             set {
-                this["OUTPUT_SERVER_NAME"] = value;
+                this["OUTPUT_HOST"] = value;
             }
         }
         
@@ -85,7 +85,7 @@ namespace CryptoBird.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("korotuntest@gmail.com")]
         public string USERNAME {
             get {
                 return ((string)(this["USERNAME"]));

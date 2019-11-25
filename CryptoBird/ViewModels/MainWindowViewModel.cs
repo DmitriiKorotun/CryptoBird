@@ -9,28 +9,110 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using CryptoMail.Entities;
-using CryptoMail.Infrastructure;
+using CryptoMail.Network;
+using CryptoMail.Network.Infrastructure;
+using CryptoMail.Local;
+using CryptoMail.Local.Serialization;
 using EmailAgent;
-using MimeKit;
+using EmailAgent.Entities.Caching;
+using EmailAgent.Entities;
+using CryptoMail.Network.Entities;
+using MailKit;
 
 namespace CryptoBird.ViewModels
 {
     class MainWindowViewModel : BasicViewModel, INotifyPropertyChanged
     {
-        private MailMessage selectedMessage;
-
-        public ObservableCollection<MailMessage> Messages { get; set; }
-        public MailMessage SelectedMessage
+        private IEmailMessage selectedMessage;
+        public IEmailMessage SelectedMessage
         {
             get { return selectedMessage; }
             set
             {
                 SetProperty(ref selectedMessage, value, "SelectedMessage");
 
-                BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
+                if (!(selectedMessage is null))
+                {
+                    SelectedFullMessage = CMController.GetMessage(
+                        Properties.MailServerSettings.Default.USERNAME, UserData.Password,
+                        Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                        SelectedFolder.FolderType, SelectedMessage.Index
+                        );
+                }
             }
         }
+
+        private MimeKit.MimeMessage selectedFullMessage;
+        public MimeKit.MimeMessage SelectedFullMessage
+        {
+            get { return selectedFullMessage; }
+            set
+            {
+                SetProperty(ref selectedFullMessage, value, "SelectedMessage");
+
+                if (!(selectedFullMessage is null))
+                {
+                    var content = selectedFullMessage.HtmlBody;
+
+                    if (!string.IsNullOrEmpty(content))
+                        BrowserHtml = content; // MAYBE NOT HERE
+                    else
+                    {
+                        content = selectedFullMessage.TextBody;
+
+                        if (!string.IsNullOrEmpty(content))
+                            BrowserHtml = content; // MAYBE NOT HERE
+                    }
+                }
+            }
+        }
+
+        private string selectedMessageDate;
+        public string SelectedMessageDate
+        {
+            get { return selectedMessageDate; }
+            set
+            {
+                SetProperty(ref selectedMessageDate, value, "SelectedMessageDate");
+            }
+        }
+
+
+        private ObservableCollection<IEmailMessage> messages;
+        public ObservableCollection<IEmailMessage> Messages {
+            get { return messages; }
+            set
+            {
+                messages = value;
+                OnPropertyChanged("Messages");
+            }
+        }
+
+
+        private CryptoMail.Network.Entities.MailFolder selectedFolder;
+        public CryptoMail.Network.Entities.MailFolder SelectedFolder
+        {
+            get { return selectedFolder; }
+            set
+            {
+                SetProperty(ref selectedFolder, value, "SelectedFolder");
+
+                var folder = FolderManager.GetFolder(SelectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+
+                FolderManager.UpdateFolder(
+                    Properties.MailServerSettings.Default.USERNAME, UserData.Password,
+                    Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                    folder
+                    );
+
+                FolderManager.SaveFolder(folder, Properties.MailServerSettings.Default.USERNAME);
+
+                Messages = new ObservableCollection<IEmailMessage>(folder.GetMessages());
+            }
+        }
+
+        public ObservableCollection<CryptoMail.Network.Entities.MailFolder> Folders { get; set; }
+
 
         private string browserHtml;
         public string BrowserHtml
@@ -48,16 +130,14 @@ namespace CryptoBird.ViewModels
         {
             DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
 
-            var contoller = new CMController();
-            Messages = new ObservableCollection<MailMessage>(
-                contoller.GetAllMessages(
-                    UserData.Login, UserData.Password, Properties.MailServerSettings.Default.INPUT_SERVER_NAME, Properties.MailServerSettings.Default.INPUT_PORT
-                    ));
+            Folders = new ObservableCollection<CryptoMail.Network.Entities.MailFolder>(CMController.GetMailFolders());
+            
+            //new ObservableCollection<MailMessage>(CMLocalController.LoadMessages(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME));
         }
 
         private void DownloadAttachments()
         {
-            new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage));
+            //new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage));
         }
 
         // Закрытые поля команд

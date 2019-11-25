@@ -59,16 +59,27 @@ namespace CryptoBird.ViewModels
             }
         }
 
+        private string username;
+        public string Username
+        {
+            get { return username; }
+            set
+            {
+                SetProperty(ref username, value, "Username");
+            }
+        }
+
         public ICommand SaveSettingsCommand { get; }
         public RelayCommand<ICloseable> CloseWindowCommand { get; private set; }
 
         public SettingsViewModel()
         {
-            InputServerName = Properties.MailServerSettings.Default.INPUT_SERVER_NAME;
+            InputServerName = Properties.MailServerSettings.Default.INPUT_HOST;
             InputServerPort = Properties.MailServerSettings.Default.INPUT_PORT;
             InputMailType = Properties.MailServerSettings.Default.INPUT_METHOD;
-            OutputServerName = Properties.MailServerSettings.Default.OUTPUT_SERVER_NAME;
+            OutputServerName = Properties.MailServerSettings.Default.OUTPUT_HOST;
             OutputServerPort = Properties.MailServerSettings.Default.OUTPUT_PORT;
+            Username = Properties.MailServerSettings.Default.USERNAME;
 
             SaveSettingsCommand = new RelayCommand(SaveSettings);
             this.CloseWindowCommand = new RelayCommand<ICloseable>(this.CloseWindow);
@@ -76,11 +87,12 @@ namespace CryptoBird.ViewModels
 
         private void SaveSettings()
         {
-            Properties.MailServerSettings.Default.INPUT_SERVER_NAME = InputServerName;
+            Properties.MailServerSettings.Default.INPUT_HOST = InputServerName;
             Properties.MailServerSettings.Default.INPUT_PORT = InputServerPort;
             Properties.MailServerSettings.Default.INPUT_METHOD = InputMailType;
-            Properties.MailServerSettings.Default.OUTPUT_SERVER_NAME = OutputServerName;
+            Properties.MailServerSettings.Default.OUTPUT_HOST = OutputServerName;
             Properties.MailServerSettings.Default.OUTPUT_PORT = OutputServerPort;
+            Properties.MailServerSettings.Default.USERNAME = Username;
 
             Properties.MailServerSettings.Default.Save();
         }
