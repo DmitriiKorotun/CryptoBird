@@ -4,15 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CryptoBird.Layouts"
+        xmlns:localization="clr-namespace:CryptoBird.Localization"
         x:Name="SettingsWindow"
         mc:Ignorable="d"
-        Title="Settings" Height="450" Width="800">
+        Title="{x:Static localization:Strings.Settings}" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="7*"/>
+            <ColumnDefinition Width="49*"/>
+            <ColumnDefinition Width="189*"/>
+            <ColumnDefinition Width="554*"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -32,14 +34,14 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBox Text="{Binding InputServerName}" Grid.Column="1" Height="23" TextWrapping="Wrap" Width="120" Grid.Row="1"/>
-                <Label Content="STRING__SERVER__NAME" Grid.Row="1"/>
-                <Label Content="STRING__PORT" Grid.Row="1" Grid.Column="2"/>
+                <Label Content="{x:Static localization:Strings.ServerName}" Grid.Row="1"/>
+                <Label Content="{x:Static localization:Strings.Port}" Grid.Row="1" Grid.Column="2"/>
                 <TextBox Text="{Binding InputServerPort}" Grid.Column="3" Height="23" TextWrapping="Wrap" Width="120" Grid.Row="1"/>
-                <Label Content="STRING__USER__NAME" Grid.Row="2"/>
+                <Label Content="{x:Static localization:Strings.Username}" Grid.Row="2"/>
                 <TextBox Grid.Column="1" Height="23" TextWrapping="Wrap" Width="120" Grid.Row="2"/>
-                <Label Content="STRING__USER__PASSWORD" Grid.Row="2" Grid.Column="2"/>
+                <Label Content="{x:Static localization:Strings.Password}" Grid.Row="2" Grid.Column="2"/>
                 <TextBox Grid.Column="3" Height="23" TextWrapping="Wrap" Width="120" Grid.Row="2"/>
-                <Label Content="STRING__SERVER__TYPE"/>
+                <Label Content="{x:Static localization:Strings.ServerType}"/>
                 <Label Content="{Binding InputMailType}" Grid.Column="1"/>
             </Grid>
             <GroupBox Header="GroupBox" Grid.Row="1">
@@ -72,12 +74,12 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <TextBox Text="{Binding OutputServerName}" Grid.Column="1" Height="23" TextWrapping="Wrap" Width="120"/>
-                        <Label Content="STRING__SERVER__NAME"/>
-                        <Label Content="STRING__PORT" Grid.Column="2"/>
+                        <Label Content="{x:Static localization:Strings.ServerName}"/>
+                        <Label Content="{x:Static localization:Strings.Port}" Grid.Column="2"/>
                         <TextBox Text="{Binding OutputServerPort}" Grid.Column="3" Height="23" TextWrapping="Wrap" Width="120"/>
-                        <Label Content="STRING__USER__NAME" Grid.Row="1"/>
+                        <Label Content="{x:Static localization:Strings.Username}" Grid.Row="1"/>
                         <TextBox Grid.Column="1" Height="23" TextWrapping="Wrap" Width="120" Grid.Row="1"/>
-                        <Label Content="STRING__USER__PASS" Grid.Row="1" Grid.Column="2"/>
+                        <Label Content="{x:Static localization:Strings.Password}" Grid.Row="1" Grid.Column="2"/>
                         <TextBox Grid.Column="3" Height="23" TextWrapping="Wrap" Width="120" Grid.Row="1"/>
                     </Grid>
                 </GroupBox>
@@ -95,8 +97,8 @@
                     </StackPanel.Resources>
                     <Button 
                         Command="{Binding CloseWindowCommand, Mode=OneWay}" CommandParameter="{Binding ElementName=SettingsWindow}"
-                        Content="STRING__CANCEL" VerticalAlignment="Center" Width="75"/>
-                    <Button Command="{Binding SaveSettingsCommand}" Content="STRING__OK" VerticalAlignment="Center" Width="75"/>
+                        Content="{x:Static localization:Strings.Cancel}" VerticalAlignment="Center" Width="75"/>
+                    <Button Command="{Binding SaveSettingsCommand}" Content="{x:Static localization:Strings.OK}" VerticalAlignment="Center" Width="75"/>
                 </StackPanel>
             </Grid>
         </Grid>
