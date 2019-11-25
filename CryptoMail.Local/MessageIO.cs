@@ -1,10 +1,14 @@
 ﻿using CryptoMail.Local.Serialization;
+using EmailAgent.Entities;
+using EmailAgent.Entities.Caching;
+using MailKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using static CryptoMail.Local.Serialization.SerializableFolderCache;
 
 namespace CryptoMail.Local
 {
@@ -32,6 +36,17 @@ namespace CryptoMail.Local
             return messages;
         }
 
+        public Folder LoadFolder(string filename)
+        {
+            Folder folder;
+
+            var deserializedFolder = MailDeserializer.DeserializeFolder(filename);
+
+            folder = CastToFolder(deserializedFolder);
+
+            return folder;
+        }
+
         public void SaveMessage(MailMessage message, string filename)
         {
             var serializableMessage = SerializableMessage.CreateFromMailMessage(message);
@@ -44,6 +59,13 @@ namespace CryptoMail.Local
             var serializableMessages = SerializableMessages.CreateFromMailMessages(messages);
 
             MailSerializer.SaveMessages(serializableMessages, filename);
+        }
+
+        public void SaveFolder(Folder folder, string filename)
+        {
+            var serializableFolder = SerializableFolder.CreateFromFolder(folder);
+
+            MailSerializer.SaveFolder(serializableFolder, filename);
         }
 
         private MailMessage CastToMailMessage(SerializableMessage serializableMessage)
@@ -75,5 +97,71 @@ namespace CryptoMail.Local
 
             return messages;
         }
+
+        private Folder CastToFolder(SerializableFolder serializableFolder)
+        {
+            Folder folder;
+
+            IFolderCache folderCache = CastToFolderCache(serializableFolder.FolderCache);
+
+            folder = new Folder(serializableFolder.FolderType, folderCache);
+
+            return folder;
+        }
+
+        private IFolderCache CastToFolderCache(SerializableFolderCache serializableFolderCache)
+        {
+            FolderCache folderCache = new FolderCache(
+                CastToIEmailMessageListDictionary(serializableFolderCache.Messages), serializableFolderCache.UidValidity, 
+                serializableFolderCache.HighestKnownModSeq, serializableFolderCache.CacheName
+                );
+
+            return folderCache;
+        }
+
+        private List<KeyValuePair<string, object>> CastToIEmailMessageListDictionary(List<SerializableKeyValuePair<string, SerializableEmailMessage>> emailMessages)
+        {
+            List<KeyValuePair<string, object>> messagesSummary = new List<KeyValuePair<string, object>>(emailMessages.Count);
+
+            foreach (SerializableKeyValuePair<string, SerializableEmailMessage> emailMessage in emailMessages)
+            {
+                messagesSummary.Add(new KeyValuePair<string, object>(emailMessage.Key, emailMessage.Value as IEmailMessage));
+            }
+
+            return messagesSummary;
+        }
+
+        //private List<KeyValuePair<string, object>> CastToIMessageListDictionary(List<SerializableKeyValuePair<string, SerializableMessageSummary>> serializableMessages)
+        //{
+        //    List<KeyValuePair<string, object>> messagesSummary = new List<KeyValuePair<string, object>>(serializableMessages.Count);
+
+        //    foreach(SerializableKeyValuePair<string, SerializableMessageSummary> serializableMessage in serializableMessages)
+        //    {
+        //        var messageSummary = CastToIMessageSummary(serializableMessage.Value);
+
+        //        messagesSummary.Add(new KeyValuePair<string, object>(serializableMessage.Key, messageSummary));
+        //    }
+
+        //    return messagesSummary;
+        //}
+
+        //private IMessageSummary CastToIMessageSummary(SerializableMessageSummary serializableMessage)
+        //{
+        //    IMessageSummary iMessageSummary = new EmailMessage(serializableMessage.Index);
+
+        //    if (iMessageSummary is EmailMessage emailMessage)
+        //    {
+        //        emailMessage.Envelope = new Envelope
+        //        {
+        //            Subject = serializableMessage.Subject
+        //        };
+
+        //        emailMessage.UniqueId = serializableMessage.UniqueId;
+
+        //        emailMessage.Date = serializableMessage.Date;
+        //    }
+
+        //    return iMessageSummary;
+        //}
     }
 }

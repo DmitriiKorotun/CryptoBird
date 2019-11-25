@@ -43,5 +43,21 @@ namespace CryptoMail.Local.Serialization
 
             return messages;
         }
+
+        public static SerializableFolder DeserializeFolder(string filename)
+        {
+            SerializableFolder folder;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(SerializableFolder));
+
+            using (StreamReader reader = new StreamReader(filename))
+            {
+                folder = (SerializableFolder)serializer.Deserialize(reader);
+
+                reader.Close();
+            }
+
+            return folder;
+        }
     }
 }

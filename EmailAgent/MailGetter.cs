@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Caching;
+using EmailAgent.Entities.Caching;
 
 namespace EmailAgent
 {
@@ -27,7 +29,7 @@ namespace EmailAgent
 
             using (var client = new ImapClient())
             {
-                // For demo-purposes, accept all SSL certificates
+                //// For demo-purposes, accept all SSL certificates
                 client.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
                 client.Connect(host, port, true);
@@ -39,19 +41,19 @@ namespace EmailAgent
 
                 messages = new List<MimeMessage>(mailFolder.Count);
 
-                Console.WriteLine("Total messages: {0}", mailFolder.Count);
-                Console.WriteLine("Recent messages: {0}", mailFolder.Recent);
+                //Console.WriteLine("Total messages: {0}", mailFolder.Count);
+                //Console.WriteLine("Recent messages: {0}", mailFolder.Recent);
 
-                for (int i = 0; i < mailFolder.Count; i++)
-                {
-                    var message = mailFolder.GetMessage(i);
+                //for (int i = 0; i < mailFolder.Count; i++)
+                //{
+                //    var message = mailFolder.GetMessage(i);
 
-                    Console.WriteLine("Subject: {0}", message.Subject);
+                //    Console.WriteLine("Subject: {0}", message.Subject);
 
-                    messages.Add(message);
-                }
+                //    messages.Add(message);
+                //}
 
-                client.Disconnect(true);
+                //client.Disconnect(true);
 
                 return messages;
             }
@@ -83,7 +85,7 @@ namespace EmailAgent
             return folder;
         }
 
-        public static MimeMessage GetMessage(string host, int port, string login, string password, int messageIndex)
+        public static MimeMessage GetMessage(string host, int port, string login, string password, MailSpecialFolder folder, int messageIndex)
         {
             MimeMessage message;
 
@@ -96,9 +98,11 @@ namespace EmailAgent
 
                 client.Authenticate(login, password);
 
-                client.Inbox.Open(FolderAccess.ReadOnly);
+                var mailFolder = GetMailFolder(client, folder);
 
-                message = client.Inbox.GetMessage(messageIndex);
+                mailFolder.Open(FolderAccess.ReadOnly);
+
+                message = mailFolder.GetMessage(messageIndex);
 
                 client.Disconnect(true);
 

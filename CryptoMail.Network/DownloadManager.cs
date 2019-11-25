@@ -7,7 +7,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail
+namespace CryptoMail.Network
 {
     public static class DownloadManager
     {

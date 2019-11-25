@@ -7,8 +7,8 @@
     <ProjectGuid>{9B9C4979-883B-4B2C-975C-431AB5ADF400}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CryptoMail</RootNamespace>
-    <AssemblyName>CryptoMail</AssemblyName>
+    <RootNamespace>CryptoMail.Network</RootNamespace>
+    <AssemblyName>CryptoMail.Network</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -39,6 +39,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,9 +52,9 @@
     <Compile Include="Infrastructure\CMController.cs" />
     <Compile Include="Entities\PostEntities.cs" />
     <Compile Include="DownloadManager.cs" />
-    <Compile Include="Entities\CryptoBlob.cs" />
-    <Compile Include="Entities\Blob.cs" />
-    <Compile Include="Entities\DataBlob.cs" />
+    <Compile Include="Entities\Blobs\CryptoBlob.cs" />
+    <Compile Include="Entities\Blobs\Blob.cs" />
+    <Compile Include="Entities\Blobs\DataBlob.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Infrastructure\IO.cs" />
     <Compile Include="Infrastructure\Postman.cs" />

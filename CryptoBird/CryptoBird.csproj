@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <UICulture>en-US</UICulture>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -62,6 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="Controller.cs" />
     <Compile Include="DisplayRootRegistry.cs" />
+    <Compile Include="FolderManager.cs" />
     <Compile Include="ICloseable.cs" />
     <Compile Include="Layouts\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
@@ -149,9 +151,9 @@
       <Project>{E22BF397-39C5-4808-8195-5D3C3D6A28D1}</Project>
       <Name>CryptoMail.Local</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CryptoMail\CryptoMail.csproj">
+    <ProjectReference Include="..\CryptoMail.Network\CryptoMail.Network.csproj">
       <Project>{9b9c4979-883b-4b2c-975c-431ab5adf400}</Project>
-      <Name>CryptoMail</Name>
+      <Name>CryptoMail.Network</Name>
     </ProjectReference>
     <ProjectReference Include="..\EmailAgent\EmailAgent.csproj">
       <Project>{0a132010-42c9-4dd5-8c3a-4a528a65c1ea}</Project>

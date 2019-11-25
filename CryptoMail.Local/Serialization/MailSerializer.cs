@@ -1,4 +1,5 @@
 ﻿using EmailAgent;
+using EmailAgent.Entities.Caching;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,6 +32,18 @@ namespace CryptoMail.Local.Serialization
             using (TextWriter writer = new StreamWriter(filename))
             {
                 serializer.Serialize(writer, messages);
+
+                writer.Close();
+            }
+        }
+
+        public static void SaveFolder(SerializableFolder folder, string filename)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(SerializableFolder));
+
+            using (TextWriter writer = new StreamWriter(filename))
+            {
+                serializer.Serialize(writer, folder);
 
                 writer.Close();
             }

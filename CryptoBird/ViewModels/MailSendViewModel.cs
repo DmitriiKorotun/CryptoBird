@@ -1,5 +1,5 @@
-﻿using CryptoMail.Entities;
-using CryptoMail.Infrastructure;
+﻿using CryptoMail.Network.Entities;
+using CryptoMail.Network.Infrastructure;
 using EmailAgent;
 using System;
 using System.Collections.Generic;

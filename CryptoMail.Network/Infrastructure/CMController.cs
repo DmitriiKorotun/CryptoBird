@@ -1,5 +1,7 @@
-﻿using CryptoMail.Entities;
+﻿using CryptoMail.Network.Entities;
 using EmailAgent;
+using EmailAgent.Entities;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail.Infrastructure
+namespace CryptoMail.Network.Infrastructure
 {
     public class CMController
     {
@@ -51,6 +53,13 @@ namespace CryptoMail.Infrastructure
             }
 
             return messages;
+        }
+
+        public static MimeMessage GetMessage(string login, string password, string host, int port, MailSpecialFolder folder, int index)
+        {
+            var message = MailGetter.GetMessage(host, port, login, password, folder, index);
+
+            return message;
         }
 
         public static List<MailFolder> GetMailFolders()

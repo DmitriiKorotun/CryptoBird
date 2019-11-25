@@ -5,7 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail.Infrastructure
+namespace CryptoMail.Network.Infrastructure
 {
     class MailParser
     {
