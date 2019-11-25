@@ -109,44 +109,59 @@ namespace CryptoMail.Local
             return folder;
         }
 
-        private IFolderCache CastToFolderCache(SerializableFolderCache serializableFolder)
+        private IFolderCache CastToFolderCache(SerializableFolderCache serializableFolderCache)
         {
-            FolderCache folder = new FolderCache(
-                CastToIMessageListDictionary(serializableFolder.Messages), serializableFolder.UidValidity, serializableFolder.HighestKnownModSeq
+            FolderCache folderCache = new FolderCache(
+                CastToIEmailMessageListDictionary(serializableFolderCache.Messages), serializableFolderCache.UidValidity, 
+                serializableFolderCache.HighestKnownModSeq, serializableFolderCache.CacheName
                 );
 
-            return folder;
+            return folderCache;
         }
 
-        private List<KeyValuePair<string, object>> CastToIMessageListDictionary(List<SerializableKeyValuePair<string, SerializableMessageSummary>> serializableMessages)
+        private List<KeyValuePair<string, object>> CastToIEmailMessageListDictionary(List<SerializableKeyValuePair<string, SerializableEmailMessage>> emailMessages)
         {
-            List<KeyValuePair<string, object>> messagesSummary = new List<KeyValuePair<string, object>>(serializableMessages.Count);
+            List<KeyValuePair<string, object>> messagesSummary = new List<KeyValuePair<string, object>>(emailMessages.Count);
 
-            foreach(SerializableKeyValuePair<string, SerializableMessageSummary> serializableMessage in serializableMessages)
+            foreach (SerializableKeyValuePair<string, SerializableEmailMessage> emailMessage in emailMessages)
             {
-                var messageSummary = CastToIMessageSummary(serializableMessage.Value);
-
-                messagesSummary.Add(new KeyValuePair<string, object>(serializableMessage.Key, messageSummary));
+                messagesSummary.Add(new KeyValuePair<string, object>(emailMessage.Key, emailMessage.Value as IEmailMessage));
             }
 
             return messagesSummary;
         }
 
-        private IMessageSummary CastToIMessageSummary(SerializableMessageSummary serializableMessage)
-        {
-            IMessageSummary iMessageSummary = new MessageSummary(serializableMessage.Index);
+        //private List<KeyValuePair<string, object>> CastToIMessageListDictionary(List<SerializableKeyValuePair<string, SerializableMessageSummary>> serializableMessages)
+        //{
+        //    List<KeyValuePair<string, object>> messagesSummary = new List<KeyValuePair<string, object>>(serializableMessages.Count);
 
-            if (iMessageSummary is MessageSummary messageSummary)
-            {
-                messageSummary.Envelope = new Envelope
-                {
-                    Subject = serializableMessage.Subject
-                };
+        //    foreach(SerializableKeyValuePair<string, SerializableMessageSummary> serializableMessage in serializableMessages)
+        //    {
+        //        var messageSummary = CastToIMessageSummary(serializableMessage.Value);
 
-                messageSummary.UniqueId = serializableMessage.UniqueId;
-            }
+        //        messagesSummary.Add(new KeyValuePair<string, object>(serializableMessage.Key, messageSummary));
+        //    }
 
-            return iMessageSummary;
-        }
+        //    return messagesSummary;
+        //}
+
+        //private IMessageSummary CastToIMessageSummary(SerializableMessageSummary serializableMessage)
+        //{
+        //    IMessageSummary iMessageSummary = new EmailMessage(serializableMessage.Index);
+
+        //    if (iMessageSummary is EmailMessage emailMessage)
+        //    {
+        //        emailMessage.Envelope = new Envelope
+        //        {
+        //            Subject = serializableMessage.Subject
+        //        };
+
+        //        emailMessage.UniqueId = serializableMessage.UniqueId;
+
+        //        emailMessage.Date = serializableMessage.Date;
+        //    }
+
+        //    return iMessageSummary;
+        //}
     }
 }

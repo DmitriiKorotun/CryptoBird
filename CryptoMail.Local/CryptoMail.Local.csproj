@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\MailDeserializer.cs" />
     <Compile Include="Serialization\MailSerializer.cs" />
+    <Compile Include="Serialization\SerializableEmailMessage.cs" />
     <Compile Include="Serialization\SerializableFolder.cs" />
     <Compile Include="Serialization\SerializableFolderCache.cs" />
     <Compile Include="Serialization\SerializableMessage.cs" />

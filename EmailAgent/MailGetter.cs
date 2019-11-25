@@ -85,7 +85,7 @@ namespace EmailAgent
             return folder;
         }
 
-        public static MimeMessage GetMessage(string host, int port, string login, string password, int messageIndex)
+        public static MimeMessage GetMessage(string host, int port, string login, string password, MailSpecialFolder folder, int messageIndex)
         {
             MimeMessage message;
 
@@ -98,9 +98,11 @@ namespace EmailAgent
 
                 client.Authenticate(login, password);
 
-                client.Inbox.Open(FolderAccess.ReadOnly);
+                var mailFolder = GetMailFolder(client, folder);
 
-                message = client.Inbox.GetMessage(messageIndex);
+                mailFolder.Open(FolderAccess.ReadOnly);
+
+                message = mailFolder.GetMessage(messageIndex);
 
                 client.Disconnect(true);
 

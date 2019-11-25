@@ -1,6 +1,7 @@
 ﻿using CryptoMail.Network.Entities;
 using EmailAgent;
 using EmailAgent.Entities;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,11 +55,11 @@ namespace CryptoMail.Network.Infrastructure
             return messages;
         }
 
-        private static void UpdateFolder(string login, string password, string host, int port, MailFolder folderType)
+        public static MimeMessage GetMessage(string login, string password, string host, int port, MailSpecialFolder folder, int index)
         {
-            var folder = new Folder(folderType.FolderType);
+            var message = MailGetter.GetMessage(host, port, login, password, folder, index);
 
-            folder.UpdateFolder(host, port, login, password);
+            return message;
         }
 
         public static List<MailFolder> GetMailFolders()

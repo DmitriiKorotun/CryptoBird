@@ -17,7 +17,7 @@ namespace EmailAgent.Entities
 
         public Folder(MailSpecialFolder folderType)
         {
-            FolderCache = new FolderCache(0);
+            FolderCache = new FolderCache(0, folderType.ToString());
 
             FolderType = folderType;
         }
@@ -27,6 +27,11 @@ namespace EmailAgent.Entities
             FolderCache = folderCache;
 
             FolderType = folderType;
+        }
+
+        public List<IEmailMessage> GetMessages()
+        {
+            return FolderCache.GetMessagesList();
         }
 
         public void UpdateFolder(string host, int port, string login, string password)

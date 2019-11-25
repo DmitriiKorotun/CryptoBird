@@ -21,7 +21,7 @@ namespace CryptoMail.Local.Serialization
         {
             SerializableFolder serialazableFolder = new SerializableFolder
             {
-                FolderCache = SerializableFolderCache.CreateFromFolderCache(folder.FolderCache),
+                FolderCache = SerializableFolderCache.CreateFromFolderCache(folder.FolderCache, folder.FolderType.ToString()),
 
                 FolderType = folder.FolderType
             };

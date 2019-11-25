@@ -14,18 +14,18 @@ namespace EmailAgent.Entities.Caching
         protected ulong HighestKnownModSeq { get; set; }
         public uint UidValidity { get; set; }
 
-        public FolderCache(uint uidValidity)
+        public FolderCache(uint uidValidity, string name)
         {
-            Cache = MemoryCache.Default;
+            Cache = new MemoryCache(name);
 
             HighestKnownModSeq = 0;
 
             UidValidity = uidValidity;
         }
 
-        public FolderCache(List<KeyValuePair<string, object>> messages, uint uidValidity, ulong highestKnownModSeq)
+        public FolderCache(List<KeyValuePair<string, object>> messages, uint uidValidity, ulong highestKnownModSeq, string name)
         {
-            Cache = MemoryCache.Default;
+            Cache = new MemoryCache(name);
 
             Cache.Concat(messages);
 
@@ -36,13 +36,16 @@ namespace EmailAgent.Entities.Caching
 
         public void Add(IMessageSummary item)
         {
-            var cacheItem = new CacheItem(item.UniqueId.ToString(), item);
+            
+            IEmailMessage emailMessage = new EmailMessage(item);
+
+            var cacheItem = new CacheItem(item.UniqueId.Id.ToString(), emailMessage);
 
             CacheItemPolicy policy = new CacheItemPolicy();
 
             Cache.Add(cacheItem, policy);
 
-            UpdateHighestKnownModSeq(item.ModSeq);
+            UpdateHighestKnownModSeq(emailMessage.ModSeq);
         }
 
         private void UpdateHighestKnownModSeq(ulong? modSeq)
@@ -54,10 +57,14 @@ namespace EmailAgent.Entities.Caching
 
         public void Update(IMessageSummary item)
         {
-            var key = item.UniqueId.ToString();
+            var key = item.UniqueId.Id.ToString();
 
             if (Cache.Contains(key))
-                Cache[key] = item;
+            {
+                var emailMessage = new EmailMessage(item);
+
+                Cache[key] = emailMessage;
+            }            
 
             UpdateHighestKnownModSeq(item.ModSeq);
         }
@@ -76,7 +83,7 @@ namespace EmailAgent.Entities.Caching
 
         public void Remove(UniqueId uid)
         {
-            Cache.Remove(uid.ToString());
+            Cache.Remove(uid.Id.ToString());
         }
 
         public void Remove(int index)
@@ -115,7 +122,8 @@ namespace EmailAgent.Entities.Caching
 
         public void Clear()
         {
-            Cache = MemoryCache.Default;
+            foreach (KeyValuePair<string, object> entry in Cache)
+                Cache.Remove(entry.Key);         
         }
 
         public IList<UniqueId> GetKnownUids()
@@ -124,8 +132,10 @@ namespace EmailAgent.Entities.Caching
 
             foreach (KeyValuePair<string, object> entry in Cache)
             {
-                if (entry.Value is IMessageSummary message)
-                    idList.Add(message.UniqueId);
+                if (entry.Value is IEmailMessage message)
+                {
+                    idList.Add(new UniqueId(message.UniqueId));
+                }
             }
 
             return idList;
@@ -149,6 +159,19 @@ namespace EmailAgent.Entities.Caching
         public List<KeyValuePair<string, object>> GetAllMessages()
         {
             return Cache.ToList();
+        }
+
+        public List<IEmailMessage> GetMessagesList()
+        {
+            List<IEmailMessage> messages = new List<IEmailMessage>(Cache.Count());
+
+            foreach (var item in Cache)
+            {
+                if (item.Value is IEmailMessage message)
+                    messages.Add(message);
+            }
+
+            return messages;
         }
 
         //private void btnGet_Click(object sender, EventArgs e)

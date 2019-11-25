@@ -44,10 +44,10 @@
             <DataGrid ItemsSource="{Binding Messages}" SelectedItem="{Binding SelectedMessage}"
                       AutoGenerateColumns="False" Grid.Row="1" RowHeight="50" IsReadOnly="True">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Width="150" Header="STRING__SUBJECT" Binding="{Binding Subject}"/>
-                    <DataGridTextColumn Width="200" Header="STRING__CORRESPONDENTS"/>
-                    <DataGridTextColumn Width="100" Header="STRING__DATE" Binding="{Binding From.Address}"/>
-                    <DataGridTextColumn Width="250" Header="Body" Binding="{Binding Body}"/>
+                    <DataGridTextColumn Width="275" Header="STRING__SUBJECT" Binding="{Binding Subject}"/>
+                    <DataGridTextColumn Width="250" Header="STRING__CORRESPONDENTS" Binding="{Binding From}"/>
+                    <DataGridTextColumn Width="125" Header="STRING__DATE" Binding="{Binding Date}"/>
+                    <DataGridTextColumn Width="250" Header="STRING__ATTACHMENT" Binding="{Binding HasAttachments}"/>
                 </DataGrid.Columns>
             </DataGrid>
             <WebBrowser local:BrowserBehavior.Html="{Binding BrowserHtml}" Grid.Row="3"/>
@@ -84,9 +84,9 @@
                     <Label Content="STRING__SUBJECT" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1"/>
                     <Label Content="STRING__TO" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="2"/>
 
-                    <Label Content="{Binding SelectedMessage.From.Address}"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Label Content="{Binding SelectedMessage.From}"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
                     <Label Content="{Binding SelectedMessage.Subject}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="1"/>
-                    <Label Content="STRING__TO__BODY" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2"  Grid.Column="1"/>
+                    <Label Content="{Binding SelectedMessage.To}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2"  Grid.Column="1"/>
 
                     <Label Content="{Binding SelectedMessageDate}" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1"  Grid.Column="2"/>
                 </Grid>

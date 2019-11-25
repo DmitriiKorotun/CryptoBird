@@ -1,4 +1,5 @@
-﻿using EmailAgent.Entities.Caching;
+﻿using EmailAgent.Entities;
+using EmailAgent.Entities.Caching;
 using MailKit;
 using System;
 using System.Collections.Generic;
@@ -30,25 +31,26 @@ namespace CryptoMail.Local.Serialization
             }
         }
 
-        public List<SerializableKeyValuePair<string, SerializableMessageSummary>> Messages { get; set; }
+        public List<SerializableKeyValuePair<string, SerializableEmailMessage>> Messages { get; set; }
         public ulong HighestKnownModSeq { get; set; }
         public uint UidValidity { get; set; }
+        public string CacheName { get; set; }
 
         public SerializableFolderCache() { }
 
-        public SerializableFolderCache(List<SerializableKeyValuePair<string, SerializableMessageSummary>> messages)
+        public SerializableFolderCache(List<SerializableKeyValuePair<string, SerializableEmailMessage>> messages)
         {
             Messages = messages;
         }
 
-        public SerializableFolderCache(List<SerializableKeyValuePair<string, SerializableMessageSummary>> messages, uint uidValidity)
+        public SerializableFolderCache(List<SerializableKeyValuePair<string, SerializableEmailMessage>> messages, uint uidValidity)
         {
             Messages = messages;
 
             UidValidity = uidValidity;
         }
 
-        public SerializableFolderCache(List<SerializableKeyValuePair<string, SerializableMessageSummary>> messages, uint uidValidity, ulong highestKnownModSeq)
+        public SerializableFolderCache(List<SerializableKeyValuePair<string, SerializableEmailMessage>> messages, uint uidValidity, ulong highestKnownModSeq)
         {
             Messages = messages;
 
@@ -57,19 +59,31 @@ namespace CryptoMail.Local.Serialization
             HighestKnownModSeq = highestKnownModSeq;
         }
 
-        public static SerializableFolderCache CreateFromFolderCache(IFolderCache folderCache)
-        {           
+        public SerializableFolderCache(List<SerializableKeyValuePair<string, SerializableEmailMessage>> messages, uint uidValidity, ulong highestKnownModSeq, string cacheName)
+        {
+            Messages = messages;
+
+            UidValidity = uidValidity;
+
+            HighestKnownModSeq = highestKnownModSeq;
+
+            CacheName = cacheName;
+        }
+
+        public static SerializableFolderCache CreateFromFolderCache(IFolderCache folderCache, string folderCacheName)
+        {          
             List<KeyValuePair<string, object>> messages = folderCache.GetAllMessages();
 
-            var serializableMessages = new List<SerializableKeyValuePair<string, SerializableMessageSummary>>(messages.Count);
+            var serializableMessages = new List<SerializableKeyValuePair<string, SerializableEmailMessage>>(messages.Count);
 
             foreach (KeyValuePair<string, object> entry in messages)
             {
-                if (entry.Value is IMessageSummary message)
+                if (entry.Value is IEmailMessage message)
                 {
-                    var serializableMessage = SerializableMessageSummary.CreateFromIMessageSummary(message);
+                    //var serializableMessage = IEmailMessage.CreateFromIMessageSummary(message);
 
-                    serializableMessages.Add(new SerializableKeyValuePair<string, SerializableMessageSummary>(entry.Key, serializableMessage));
+                    //serializableMessages.Add(new SerializableKeyValuePair<string, IEmailMessage>(entry.Key, serializableMessage));
+                    serializableMessages.Add(new SerializableKeyValuePair<string, SerializableEmailMessage>(entry.Key, new SerializableEmailMessage(message)));
                 }
             }
 
@@ -77,7 +91,9 @@ namespace CryptoMail.Local.Serialization
 
             uint uidValidity = folderCache.GetUidValidity();
 
-            return new SerializableFolderCache(serializableMessages, uidValidity, highestKnownModSeq);
+            string cacheName = folderCacheName;
+
+            return new SerializableFolderCache(serializableMessages, uidValidity, highestKnownModSeq, cacheName);
         }
     }
 }

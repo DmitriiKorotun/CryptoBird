@@ -55,6 +55,8 @@
     <Compile Include="EmailMessageSimplified.cs" />
     <Compile Include="Entities\Caching\FolderCache.cs" />
     <Compile Include="Entities\Caching\IFolderCache.cs" />
+    <Compile Include="Entities\EmailMessage.cs" />
+    <Compile Include="Entities\IEmailMessage.cs" />
     <Compile Include="MailGetter.cs" />
     <Compile Include="MailSender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

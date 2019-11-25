@@ -17,13 +17,14 @@ using EmailAgent;
 using EmailAgent.Entities.Caching;
 using EmailAgent.Entities;
 using CryptoMail.Network.Entities;
+using MailKit;
 
 namespace CryptoBird.ViewModels
 {
     class MainWindowViewModel : BasicViewModel, INotifyPropertyChanged
     {
-        private MailMessage selectedMessage;
-        public MailMessage SelectedMessage
+        private IEmailMessage selectedMessage;
+        public IEmailMessage SelectedMessage
         {
             get { return selectedMessage; }
             set
@@ -32,12 +33,36 @@ namespace CryptoBird.ViewModels
 
                 if (!(selectedMessage is null))
                 {
-                    if (!string.IsNullOrEmpty(selectedMessage.Body))
-                        BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
+                    SelectedFullMessage = CMController.GetMessage(
+                        Properties.MailServerSettings.Default.USERNAME, UserData.Password,
+                        Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                        SelectedFolder.FolderType, SelectedMessage.Index
+                        );
+                }
+            }
+        }
 
-                    //CMLocalController.SaveMessages(Messages.ToList(), SelectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+        private MimeKit.MimeMessage selectedFullMessage;
+        public MimeKit.MimeMessage SelectedFullMessage
+        {
+            get { return selectedFullMessage; }
+            set
+            {
+                SetProperty(ref selectedFullMessage, value, "SelectedMessage");
 
-                    SelectedMessageDate = SelectedMessage.Headers["Date"];
+                if (!(selectedFullMessage is null))
+                {
+                    var content = selectedFullMessage.HtmlBody;
+
+                    if (!string.IsNullOrEmpty(content))
+                        BrowserHtml = content; // MAYBE NOT HERE
+                    else
+                    {
+                        content = selectedFullMessage.TextBody;
+
+                        if (!string.IsNullOrEmpty(content))
+                            BrowserHtml = content; // MAYBE NOT HERE
+                    }
                 }
             }
         }
@@ -53,8 +78,8 @@ namespace CryptoBird.ViewModels
         }
 
 
-        private ObservableCollection<MailMessage> messages;
-        public ObservableCollection<MailMessage> Messages {
+        private ObservableCollection<IEmailMessage> messages;
+        public ObservableCollection<IEmailMessage> Messages {
             get { return messages; }
             set
             {
@@ -64,37 +89,29 @@ namespace CryptoBird.ViewModels
         }
 
 
-        private MailFolder selectedFolder;
-        public MailFolder SelectedFolder
+        private CryptoMail.Network.Entities.MailFolder selectedFolder;
+        public CryptoMail.Network.Entities.MailFolder SelectedFolder
         {
             get { return selectedFolder; }
             set
             {
                 SetProperty(ref selectedFolder, value, "SelectedFolder");
 
-                var contoller = new CMController();
-
-                var folderInbox = FolderManager.CreateFolder(MailSpecialFolder.Inbox);
+                var folder = FolderManager.GetFolder(SelectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
 
                 FolderManager.UpdateFolder(
                     Properties.MailServerSettings.Default.USERNAME, UserData.Password,
                     Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
-                    folderInbox
+                    folder
                     );
 
-                FolderManager.SaveFolder(folderInbox, Properties.MailServerSettings.Default.USERNAME);
+                FolderManager.SaveFolder(folder, Properties.MailServerSettings.Default.USERNAME);
 
-                var loadedFolder = FolderManager.LoadFolder(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME);
-
-                //Messages = new ObservableCollection<MailMessage>(
-                //    contoller.GetAllMessages(
-                //        UserData.Login, UserData.Password, Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
-                //        selectedFolder.FolderType
-                //        ));
+                Messages = new ObservableCollection<IEmailMessage>(folder.GetMessages());
             }
         }
 
-        public ObservableCollection<MailFolder> Folders { get; set; }
+        public ObservableCollection<CryptoMail.Network.Entities.MailFolder> Folders { get; set; }
 
 
         private string browserHtml;
@@ -113,14 +130,14 @@ namespace CryptoBird.ViewModels
         {
             DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
 
-            Folders = new ObservableCollection<MailFolder>(CMController.GetMailFolders());
-
-            Messages = new ObservableCollection<MailMessage>(CMLocalController.LoadMessages(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME));
+            Folders = new ObservableCollection<CryptoMail.Network.Entities.MailFolder>(CMController.GetMailFolders());
+            
+            //new ObservableCollection<MailMessage>(CMLocalController.LoadMessages(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME));
         }
 
         private void DownloadAttachments()
         {
-            new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage));
+            //new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage));
         }
 
         // Закрытые поля команд

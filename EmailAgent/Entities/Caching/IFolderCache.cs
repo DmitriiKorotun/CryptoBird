@@ -21,5 +21,6 @@ namespace EmailAgent.Entities.Caching
         void SetUidValidity(uint uidValidity);
         IList<UniqueId> GetKnownUids();
         List<KeyValuePair<string, object>> GetAllMessages();
+        List<IEmailMessage> GetMessagesList();
     }
 }

@@ -11,6 +11,31 @@ namespace CryptoBird
 {
     static class FolderManager
     {
+        public static Folder GetFolder(MailSpecialFolder folderType, string currentUser)
+        {
+            Folder folder;
+
+            try
+            {
+                folder = LoadFolder(folderType, currentUser);
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    folder = CreateFolder(folderType);
+
+                    SaveFolder(folder, currentUser);
+                }
+                catch (Exception ex2)
+                {
+                    return null;
+                }
+            }
+
+            return folder;
+        }
+
         public static Folder CreateFolder(MailSpecialFolder folderType)
         {
             var folder = new Folder(folderType);
