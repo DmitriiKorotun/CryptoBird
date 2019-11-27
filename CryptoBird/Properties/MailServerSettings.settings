@@ -18,7 +18,7 @@
       <Value Profile="(Default)">587</Value>
     </Setting>
     <Setting Name="USERNAME" Type="System.String" Scope="User">
-      <Value Profile="(Default)">korotuntest@gmail.com</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="USER_PASSWORD" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

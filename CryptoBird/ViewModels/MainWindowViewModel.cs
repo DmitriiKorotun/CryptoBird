@@ -131,21 +131,50 @@ namespace CryptoBird.ViewModels
             DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
 
             Folders = new ObservableCollection<CryptoMail.Network.Entities.MailFolder>(CMController.GetMailFolders());
-            
+
+            CheckAuthorization();
+
             //new ObservableCollection<MailMessage>(CMLocalController.LoadMessages(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME));
+        }
+
+        private async void CheckAuthorization()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            //while (string.IsNullOrEmpty(Properties.MailServerSettings.Default.USERNAME))
+            //    OpenAuthorizationWindow.Execute(null);
+
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            //displayRootRegistry.HidePresentation(this);
+            while (string.IsNullOrEmpty(Properties.MailServerSettings.Default.USERNAME))
+                await displayRootRegistry.ShowModalPresentation(new AuthorizationViewModel());
         }
 
         private void DownloadAttachments()
         {
-            //new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage));
+            new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage), SelectedFolder.FolderType);
         }
 
         // Закрытые поля команд
+        private ICommand _openAuthorizationWindow;
+
         private ICommand _openMailSendWindow;
 
         private ICommand _openSettingsWindow;
 
         // Свойства доступные только для чтения для обращения к командам и их инициализации
+        public ICommand OpenAuthorizationWindow
+        {
+            get
+            {
+                if (_openAuthorizationWindow == null)
+                {
+                    _openAuthorizationWindow = new OpenAuthorizationWindowCommand(this);
+                }
+                return _openAuthorizationWindow;
+            }
+        }
+
         public ICommand OpenMailSendWindow
         {
             get
@@ -157,6 +186,7 @@ namespace CryptoBird.ViewModels
                 return _openMailSendWindow;
             }
         }
+
         public ICommand OpenSettingsWindow
         {
             get
@@ -185,6 +215,25 @@ namespace CryptoBird.ViewModels
             public abstract void Execute(object parameter);
         }
 
+        class OpenAuthorizationWindowCommand : WindowCommand
+        {
+            public OpenAuthorizationWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
+            {
+            }
+            public override bool CanExecute(object parameter)
+            {
+                return true;
+            }
+            public override async void Execute(object parameter)
+            {
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+
+                var authorizationWindowViewModel = new AuthorizationViewModel();
+
+                await displayRootRegistry.ShowModalPresentation(authorizationWindowViewModel);
+            }
+        }
+
         class OpenMailSendWindowCommand : WindowCommand
         {
             public OpenMailSendWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
@@ -199,6 +248,7 @@ namespace CryptoBird.ViewModels
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
 
                 var mailSendViewModel = new MailSendViewModel();
+
                 await displayRootRegistry.ShowModalPresentation(mailSendViewModel);
             }
         }
@@ -217,6 +267,7 @@ namespace CryptoBird.ViewModels
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
 
                 var settingsWindowViewModel = new SettingsViewModel();
+
                 await displayRootRegistry.ShowModalPresentation(settingsWindowViewModel);
             }
         }

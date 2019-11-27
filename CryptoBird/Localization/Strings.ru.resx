@@ -120,6 +120,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Отмена</value>
   </data>
+  <data name="ChangeAccount" xml:space="preserve">
+    <value>Сменить пользователя</value>
+  </data>
   <data name="Correspondents" xml:space="preserve">
     <value>Корреспонденты</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="HasAttachments" xml:space="preserve">
     <value>Есть вложения</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Логин</value>
   </data>
   <data name="More" xml:space="preserve">
     <value>Больше</value>
