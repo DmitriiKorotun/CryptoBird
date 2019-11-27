@@ -70,6 +70,15 @@ namespace CryptoBird.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Change account.
+        /// </summary>
+        public static string ChangeAccount {
+            get {
+                return ResourceManager.GetString("ChangeAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Correspondents.
         /// </summary>
         public static string Correspondents {
@@ -147,6 +156,15 @@ namespace CryptoBird.Localization {
         public static string HasAttachments {
             get {
                 return ResourceManager.GetString("HasAttachments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Login.
+        /// </summary>
+        public static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
             }
         }
         

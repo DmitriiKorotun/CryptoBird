@@ -120,6 +120,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="ChangeAccount" xml:space="preserve">
+    <value>Change account</value>
+  </data>
   <data name="Correspondents" xml:space="preserve">
     <value>Correspondents</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="HasAttachments" xml:space="preserve">
     <value>Has attachments</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
   </data>
   <data name="More" xml:space="preserve">
     <value>More</value>

@@ -85,7 +85,7 @@ namespace CryptoBird.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("korotuntest@gmail.com")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string USERNAME {
             get {
                 return ((string)(this["USERNAME"]));

@@ -20,6 +20,7 @@
         <Menu Margin="0" Grid.ColumnSpan="2" MinHeight="22">
             <MenuItem Header="{x:Static localization:Strings.Create}" Command="{Binding OpenMailSendWindow}"/>
             <MenuItem Header="{x:Static localization:Strings.Settings}" Command="{Binding OpenSettingsWindow}"/>
+            <MenuItem Header="{x:Static localization:Strings.ChangeAccount}" Command="{Binding OpenAuthorizationWindow}"/>
         </Menu>
         <Expander IsExpanded="True" Header="{Binding Source={x:Static properties:PublicOnForm.Default}, Path=USERNAME_INPUT}" Margin="0,5,0,0" Grid.Row="1" VerticalAlignment="Top">
             <ListView ItemsSource="{Binding Folders}" SelectedItem="{Binding SelectedFolder}">

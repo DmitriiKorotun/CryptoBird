@@ -23,17 +23,46 @@ namespace CryptoBird
             displayRootRegistry.RegisterWindowType<MainWindowViewModel, MainWindow>();
             displayRootRegistry.RegisterWindowType<MailSendViewModel, MailSend>();
             displayRootRegistry.RegisterWindowType<SettingsViewModel, Settings>();
+            displayRootRegistry.RegisterWindowType<AuthorizationViewModel, Authorization>();
         }
 
         protected override async void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
+            //base.OnStartup(e);
+            //await RunProgramLogic();
+            //Shutdown();
 
-            mainWindowViewModel = new MainWindowViewModel();
+            mainWindowViewModel = new MainWindowViewModel();          
 
             await displayRootRegistry.ShowModalPresentation(mainWindowViewModel);
 
             Shutdown();
         }
+
+        //async Task RunProgramLogic()
+        //{
+        //    while (true)
+        //    {
+        //        mainWindowViewModel = new MainWindowViewModel();
+
+        //        displayRootRegistry.ShowPresentation(mainWindowViewModel);
+
+        //        while (true)
+        //        {
+        //            var askCloseVM = new AskVM("Do you want to close the application?");
+        //            await Task.Delay(TimeSpan.FromSeconds(2));
+        //            await displayRootRegistry.ShowModalPresentation(askCloseVM);
+        //            if (askCloseVM.Answer == true)
+        //                break;
+        //        }
+        //        displayRootRegistry.HidePresentation(mainVM);
+        //        await Task.Delay(TimeSpan.FromSeconds(2));
+
+        //        var askReopenVM = new AskVM("Maybe reopen again?");
+        //        await displayRootRegistry.ShowModalPresentation(askReopenVM);
+        //        if (askReopenVM.Answer != true)
+        //            break;
+        //    }
+        //}
     }
 }
