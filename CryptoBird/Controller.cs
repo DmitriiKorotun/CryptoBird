@@ -65,7 +65,7 @@ namespace CryptoBird
             var mimeMessage = MailGetter.GetMessage(Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
                 UserData.Login, UserData.Password, folder, messageIndex);
 
-            DownloadManager.DownloadAttachments(mimeMessage);
+            DownloadManager.DownloadAttachments(mimeMessage, Properties.MailServerSettings.Default.USERNAME);
         }
 
         private string[] GetKeyPair()
