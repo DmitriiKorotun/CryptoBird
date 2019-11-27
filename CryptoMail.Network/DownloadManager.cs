@@ -1,4 +1,5 @@
-﻿using MimeKit;
+﻿using MailKit;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,11 +12,11 @@ namespace CryptoMail.Network
 {
     public static class DownloadManager
     {
-        public static void DownloadAttachments(MimeMessage message)
+        public static void DownloadAttachments(MimeMessage message, string currentUser)
         {
-            if(message.Attachments.Count() > 0)
-            {               
-                string attachmentDir = GetNewDirName(((MailboxAddress)message.From[0]).Address);
+            if (message.Attachments.Count() > 0)
+            {
+                string attachmentDir = GetNewDirName(((MailboxAddress)message.From[0]).Address, currentUser);
 
                 System.IO.Directory.CreateDirectory(attachmentDir);
 
@@ -24,8 +25,6 @@ namespace CryptoMail.Network
                     string attachmentName = GetAttachmentName(attachmentDir, attachment.ContentDisposition.FileName);
 
                     SaveMailAttachment(attachment, attachmentName);
-
-                    
                 }
             }
         }
@@ -49,9 +48,9 @@ namespace CryptoMail.Network
             }
         }
 
-        private static string GetNewDirName(string from)
+        private static string GetNewDirName(string from, string currentUser)
         {
-            return "Attachments-" + from + "-" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss");
+            return "Profiles/" + currentUser + "/Attachments-" + from + "-" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss");
         }
 
         private static string GetAttachmentName(string dir, string filename)

@@ -152,7 +152,7 @@ namespace CryptoBird.ViewModels
 
         private void DownloadAttachments()
         {
-            new Controller().DownloadAttachments(Messages.IndexOf(SelectedMessage), SelectedFolder.FolderType);
+            new Controller().DownloadAttachments(SelectedMessage.Index, SelectedFolder.FolderType);
         }
 
         // Закрытые поля команд
