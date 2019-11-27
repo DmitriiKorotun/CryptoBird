@@ -23,7 +23,7 @@ namespace EmailAgent
 
         public MailSender(string host, int port) => Smtp = new SmtpClient(host, port);
 
-        public void Send(string from, string to, string body, string subject, string login, string password, string host, int port)
+        public void Send(string from, string to, string body, string subject, string login, string password, string host, int port, bool isBodyHtml = true)
         {
             // отправитель - устанавливаем адрес и отображаемое в письме имя
             MailAddress adressFrom = new MailAddress(from);
@@ -36,7 +36,7 @@ namespace EmailAgent
                 Subject = subject,
                 // текст письма
                 Body = body,
-                IsBodyHtml = true
+                IsBodyHtml = isBodyHtml
             };
             // адрес smtp-сервера и порт, с которого будем отправлять письмо
             SmtpClient smtp = new SmtpClient(host, port)
@@ -46,6 +46,18 @@ namespace EmailAgent
                 EnableSsl = true
             };
             smtp.Send(m);
+        }
+
+        public void Send(MailMessage message, string login, string password, string host, int port)
+        {
+            // адрес smtp-сервера и порт, с которого будем отправлять письмо
+            SmtpClient smtp = new SmtpClient(host, port)
+            {
+                // логин и пароль
+                Credentials = new NetworkCredential(login, password),
+                EnableSsl = true
+            };
+            smtp.Send(message);
         }
 
         private void SetCredentials(string login, string password)

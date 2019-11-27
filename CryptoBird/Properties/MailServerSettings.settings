@@ -1,0 +1,27 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CryptoBird.Properties" GeneratedClassName="MailServerSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="INPUT_HOST" Type="System.String" Scope="User">
+      <Value Profile="(Default)">imap.gmail.com</Value>
+    </Setting>
+    <Setting Name="INPUT_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">993</Value>
+    </Setting>
+    <Setting Name="INPUT_METHOD" Type="System.String" Scope="User">
+      <Value Profile="(Default)">IMAP</Value>
+    </Setting>
+    <Setting Name="OUTPUT_HOST" Type="System.String" Scope="User">
+      <Value Profile="(Default)">smtp.gmail.com</Value>
+    </Setting>
+    <Setting Name="OUTPUT_PORT" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="USERNAME" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="USER_PASSWORD" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>

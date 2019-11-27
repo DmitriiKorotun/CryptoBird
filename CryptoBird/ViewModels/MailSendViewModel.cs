@@ -1,4 +1,6 @@
-﻿using EmailAgent;
+﻿using CryptoMail.Network.Entities;
+using CryptoMail.Network.Infrastructure;
+using EmailAgent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +40,13 @@ namespace CryptoBird.ViewModels
             set => SetProperty(ref _body, value, "Body");
         }
 
+        private MailTechnicalPassport _technicalPassport;
+        public MailTechnicalPassport TechnicalPassport
+        {
+            get => _technicalPassport;
+            set => SetProperty(ref _technicalPassport, value, "TechnicalPassport");
+        }
+
         public ICommand SendMessageCommand { get; }
 
         public MailSendViewModel()
@@ -45,35 +54,17 @@ namespace CryptoBird.ViewModels
             SendMessageCommand = new RelayCommand(SendMessage);
 
             From = UserData.Login;
+
+            TechnicalPassport = new MailTechnicalPassport();
+            TechnicalPassport.UserCreditentials.Login = UserData.Login;
+            TechnicalPassport.UserCreditentials.Password = UserData.Password;
+            TechnicalPassport.Provider.Host = "smtp.gmail.com";
+            TechnicalPassport.Provider.Port = 587;
         }
 
         private void SendMessage()
         {
-            var messageSender = new MailSender("smtp.gmail.com", 587);
-
-            messageSender.Send(From, To, Body, Subject, UserData.Login, UserData.Password, "smtp.gmail.com", 587);
-        }
-
-        public class RelayCommand<T> : ICommand
-        {
-            private Action<T> action;
-            public RelayCommand(Action<T> action) => this.action = action;
-            public bool CanExecute(object parameter) => true;
-#pragma warning disable CS0067
-            public event EventHandler CanExecuteChanged;
-#pragma warning restore CS0067
-            public void Execute(object parameter) => action((T)parameter);
-        }
-
-        public class RelayCommand : ICommand
-        {
-            private Action action;
-            public RelayCommand(Action action) => this.action = action;
-            public bool CanExecute(object parameter) => true;
-#pragma warning disable CS0067
-            public event EventHandler CanExecuteChanged;
-#pragma warning restore CS0067
-            public void Execute(object parameter) => action();
+            new CMController().SendMessage(From, To, Body, Subject, TechnicalPassport);
         }
     }
 }
