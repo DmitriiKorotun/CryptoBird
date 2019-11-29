@@ -13,13 +13,25 @@ namespace CryptoBird.Properties {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+    public sealed partial class PublicOnForm : global::System.Configuration.ApplicationSettingsBase {
         
-        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
+        private static PublicOnForm defaultInstance = ((PublicOnForm)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new PublicOnForm())));
         
-        public static Settings Default {
+        public static PublicOnForm Default {
             get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("korotuntest@gmail.com")]
+        public string USERNAME_INPUT {
+            get {
+                return ((string)(this["USERNAME_INPUT"]));
+            }
+            set {
+                this["USERNAME_INPUT"] = value;
             }
         }
     }

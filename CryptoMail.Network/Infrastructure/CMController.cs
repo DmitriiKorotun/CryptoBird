@@ -1,5 +1,7 @@
-﻿using CryptoMail.Entities;
+﻿using CryptoMail.Network.Entities;
 using EmailAgent;
+using EmailAgent.Entities;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CryptoMail.Infrastructure
+namespace CryptoMail.Network.Infrastructure
 {
     public class CMController
     {
@@ -28,9 +30,11 @@ namespace CryptoMail.Infrastructure
             Postman.DeliverMessage(message, mailPassport);
         }
 
-        public List<MailMessage> GetAllMessages(MailTechnicalPassport mailPassport)
+        public List<MailMessage> GetAllMessages(string login, string password, string host, int port, MailSpecialFolder folder)
         {
-            var messages = MailGetter.GetAllMessagesTest();
+            MailTechnicalPassport mailPassport = CreateMailPassport(login, password, host, port);
+
+            var messages = MailGetter.CastToMailMessage(MailGetter.GetAllMessages(host, port, login, password, folder));
 
             for (int i = 0; i < messages.Count; ++i)
             {
@@ -49,6 +53,33 @@ namespace CryptoMail.Infrastructure
             }
 
             return messages;
+        }
+
+        public static MimeMessage GetMessage(string login, string password, string host, int port, MailSpecialFolder folder, int index)
+        {
+            var message = MailGetter.GetMessage(host, port, login, password, folder, index);
+
+            return message;
+        }
+
+        public static List<MailFolder> GetMailFolders()
+        {
+            return new List<MailFolder>() {
+                new MailFolder("Inbox", MailSpecialFolder.Inbox), new MailFolder("Sent", MailSpecialFolder.Sent),
+                new MailFolder("Drafts", MailSpecialFolder.Drafts), new MailFolder("Trash", MailSpecialFolder.Trash)
+            };
+        }
+
+        private MailTechnicalPassport CreateMailPassport(string login, string password, string host, int port)
+        {
+            MailTechnicalPassport mailPassport = new MailTechnicalPassport();
+
+            mailPassport.UserCreditentials.Login = login;
+            mailPassport.UserCreditentials.Password = password;
+            mailPassport.Provider.Host = host;
+            mailPassport.Provider.Port = port;
+
+            return mailPassport;
         }
 
         private void PerformRequest(MailParser.Token token, MailMessage message, MailTechnicalPassport mailPassport)

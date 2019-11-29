@@ -1,6 +1,9 @@
 ﻿using Cryptography;
-using CryptoMail;
+using CryptoMail.Network;
 using EmailAgent;
+using EmailAgent.Entities;
+using MailKit.Net.Imap;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,18 +39,6 @@ namespace CryptoBird
             // Send Message
         }
 
-        public List<MailMessage> GetMessages()
-        {
-            var messages = MailGetter.GetAllMessagesTest();
-
-            //foreach(MailMessage message in messages)
-            //{
-            //    ParseSubject(message);
-            //}
-
-            return messages;
-        }
-
         private void ParseSubject(MailMessage message)
         {
             switch (message.Subject)
@@ -67,6 +58,14 @@ namespace CryptoBird
             WriteData("test.xml", keyPair[1]);
 
             new MailSender(host, port).Send(from, to, keyPair[0], "9B9817CC57EBA9DF0067A197FB7FBE9F", login, password, host, port, false);
+        }
+
+        public void DownloadAttachments(int messageIndex, MailSpecialFolder folder)
+        {
+            var mimeMessage = MailGetter.GetMessage(Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                UserData.Login, UserData.Password, folder, messageIndex);
+
+            DownloadManager.DownloadAttachments(mimeMessage, Properties.MailServerSettings.Default.USERNAME);
         }
 
         private string[] GetKeyPair()

@@ -9,27 +9,110 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using CryptoMail.Entities;
-using CryptoMail.Infrastructure;
+using CryptoMail.Network;
+using CryptoMail.Network.Infrastructure;
+using CryptoMail.Local;
+using CryptoMail.Local.Serialization;
 using EmailAgent;
+using EmailAgent.Entities.Caching;
+using EmailAgent.Entities;
+using CryptoMail.Network.Entities;
+using MailKit;
 
 namespace CryptoBird.ViewModels
 {
     class MainWindowViewModel : BasicViewModel, INotifyPropertyChanged
     {
-        private MailMessage selectedMessage;
-
-        public ObservableCollection<MailMessage> Messages { get; set; }
-        public MailMessage SelectedMessage
+        private IEmailMessage selectedMessage;
+        public IEmailMessage SelectedMessage
         {
             get { return selectedMessage; }
             set
             {
                 SetProperty(ref selectedMessage, value, "SelectedMessage");
 
-                BrowserHtml = selectedMessage.Body; // MAYBE NOT HERE
+                if (!(selectedMessage is null))
+                {
+                    SelectedFullMessage = CMController.GetMessage(
+                        Properties.MailServerSettings.Default.USERNAME, UserData.Password,
+                        Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                        SelectedFolder.FolderType, SelectedMessage.Index
+                        );
+                }
             }
         }
+
+        private MimeKit.MimeMessage selectedFullMessage;
+        public MimeKit.MimeMessage SelectedFullMessage
+        {
+            get { return selectedFullMessage; }
+            set
+            {
+                SetProperty(ref selectedFullMessage, value, "SelectedMessage");
+
+                if (!(selectedFullMessage is null))
+                {
+                    var content = selectedFullMessage.HtmlBody;
+
+                    if (!string.IsNullOrEmpty(content))
+                        BrowserHtml = content; // MAYBE NOT HERE
+                    else
+                    {
+                        content = selectedFullMessage.TextBody;
+
+                        if (!string.IsNullOrEmpty(content))
+                            BrowserHtml = content; // MAYBE NOT HERE
+                    }
+                }
+            }
+        }
+
+        private string selectedMessageDate;
+        public string SelectedMessageDate
+        {
+            get { return selectedMessageDate; }
+            set
+            {
+                SetProperty(ref selectedMessageDate, value, "SelectedMessageDate");
+            }
+        }
+
+
+        private ObservableCollection<IEmailMessage> messages;
+        public ObservableCollection<IEmailMessage> Messages {
+            get { return messages; }
+            set
+            {
+                messages = value;
+                OnPropertyChanged("Messages");
+            }
+        }
+
+
+        private CryptoMail.Network.Entities.MailFolder selectedFolder;
+        public CryptoMail.Network.Entities.MailFolder SelectedFolder
+        {
+            get { return selectedFolder; }
+            set
+            {
+                SetProperty(ref selectedFolder, value, "SelectedFolder");
+
+                var folder = FolderManager.GetFolder(SelectedFolder.FolderType, Properties.MailServerSettings.Default.USERNAME);
+
+                FolderManager.UpdateFolder(
+                    Properties.MailServerSettings.Default.USERNAME, UserData.Password,
+                    Properties.MailServerSettings.Default.INPUT_HOST, Properties.MailServerSettings.Default.INPUT_PORT,
+                    folder
+                    );
+
+                FolderManager.SaveFolder(folder, Properties.MailServerSettings.Default.USERNAME);
+
+                Messages = new ObservableCollection<IEmailMessage>(folder.GetMessages());
+            }
+        }
+
+        public ObservableCollection<CryptoMail.Network.Entities.MailFolder> Folders { get; set; }
+
 
         private string browserHtml;
         public string BrowserHtml
@@ -41,58 +124,86 @@ namespace CryptoBird.ViewModels
             }
         }
 
-        private MailTechnicalPassport _technicalPassport;
-        public MailTechnicalPassport TechnicalPassport
-        {
-            get => _technicalPassport;
-            set => SetProperty(ref _technicalPassport, value, "TechnicalPassport");
-        }
+        public ICommand DownloadEnquiredCommand { get; }
 
         public MainWindowViewModel()
         {
-            TechnicalPassport = new MailTechnicalPassport();
-            TechnicalPassport.UserCreditentials.Login = UserData.Login;
-            TechnicalPassport.UserCreditentials.Password = UserData.Password;
-            TechnicalPassport.Provider.Host = "imap.gmail.com";
-            TechnicalPassport.Provider.Port = 993;
+            DownloadEnquiredCommand = new RelayCommand(DownloadAttachments);
 
-            Messages = new ObservableCollection<MailMessage>(new CMController().GetAllMessages(TechnicalPassport));
+            Folders = new ObservableCollection<CryptoMail.Network.Entities.MailFolder>(CMController.GetMailFolders());
+
+            CheckAuthorization();
+
+            //new ObservableCollection<MailMessage>(CMLocalController.LoadMessages(MailSpecialFolder.Inbox, Properties.MailServerSettings.Default.USERNAME));
+        }
+
+        private async void CheckAuthorization()
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            //while (string.IsNullOrEmpty(Properties.MailServerSettings.Default.USERNAME))
+            //    OpenAuthorizationWindow.Execute(null);
+
+            var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+            //displayRootRegistry.HidePresentation(this);
+            while (string.IsNullOrEmpty(Properties.MailServerSettings.Default.USERNAME))
+                await displayRootRegistry.ShowModalPresentation(new AuthorizationViewModel());
+        }
+
+        private void DownloadAttachments()
+        {
+            new Controller().DownloadAttachments(SelectedMessage.Index, SelectedFolder.FolderType);
         }
 
         // Закрытые поля команд
-        private ICommand _openChildWindow;
+        private ICommand _openAuthorizationWindow;
 
-        private ICommand _openDialogWindow;
+        private ICommand _openMailSendWindow;
+
+        private ICommand _openSettingsWindow;
 
         // Свойства доступные только для чтения для обращения к командам и их инициализации
-        public ICommand OpenChildWindow
+        public ICommand OpenAuthorizationWindow
         {
             get
             {
-                if (_openChildWindow == null)
+                if (_openAuthorizationWindow == null)
                 {
-                    _openChildWindow = new OpenChildWindowCommand(this);
+                    _openAuthorizationWindow = new OpenAuthorizationWindowCommand(this);
                 }
-                return _openChildWindow;
-            }
-        }
-        public ICommand OpenDialogWindow
-        {
-            get
-            {
-                if (_openDialogWindow == null)
-                {
-                    _openDialogWindow = new OpenDialogWindowCommand(this);
-                }
-                return _openDialogWindow;
+                return _openAuthorizationWindow;
             }
         }
 
-        abstract class MyCommand : ICommand
+        public ICommand OpenMailSendWindow
+        {
+            get
+            {
+                if (_openMailSendWindow == null)
+                {
+                    _openMailSendWindow = new OpenMailSendWindowCommand(this);
+                }
+                return _openMailSendWindow;
+            }
+        }
+
+        public ICommand OpenSettingsWindow
+        {
+            get
+            {
+                if (_openSettingsWindow == null)
+                {
+                    _openSettingsWindow = new OpenSettingsWindowCommand(this);
+                }
+                return _openSettingsWindow;
+            }
+        }
+
+        abstract class WindowCommand : ICommand
         {
             protected MainWindowViewModel _mainWindowVeiwModel;
 
-            public MyCommand(MainWindowViewModel mainWindowVeiwModel)
+            public WindowCommand(MainWindowViewModel mainWindowVeiwModel)
             {
                 _mainWindowVeiwModel = mainWindowVeiwModel;
             }
@@ -104,9 +215,9 @@ namespace CryptoBird.ViewModels
             public abstract void Execute(object parameter);
         }
 
-        class OpenChildWindowCommand : MyCommand
+        class OpenAuthorizationWindowCommand : WindowCommand
         {
-            public OpenChildWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
+            public OpenAuthorizationWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
             {
             }
             public override bool CanExecute(object parameter)
@@ -117,14 +228,15 @@ namespace CryptoBird.ViewModels
             {
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
 
-                var otherWindowViewModel = new MailSendViewModel();
-                await displayRootRegistry.ShowModalPresentation(otherWindowViewModel);
+                var authorizationWindowViewModel = new AuthorizationViewModel();
+
+                await displayRootRegistry.ShowModalPresentation(authorizationWindowViewModel);
             }
         }
 
-        class OpenDialogWindowCommand : MyCommand
+        class OpenMailSendWindowCommand : WindowCommand
         {
-            public OpenDialogWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
+            public OpenMailSendWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
             {
             }
             public override bool CanExecute(object parameter)
@@ -135,9 +247,28 @@ namespace CryptoBird.ViewModels
             {
                 var displayRootRegistry = (Application.Current as App).displayRootRegistry;
 
-                var dialogWindowViewModel = new DialogWindowViewModel();
-                await displayRootRegistry.ShowModalPresentation(dialogWindowViewModel);
+                var mailSendViewModel = new MailSendViewModel();
 
+                await displayRootRegistry.ShowModalPresentation(mailSendViewModel);
+            }
+        }
+
+        class OpenSettingsWindowCommand : WindowCommand
+        {
+            public OpenSettingsWindowCommand(MainWindowViewModel mainWindowVeiwModel) : base(mainWindowVeiwModel)
+            {
+            }
+            public override bool CanExecute(object parameter)
+            {
+                return true;
+            }
+            public override async void Execute(object parameter)
+            {
+                var displayRootRegistry = (Application.Current as App).displayRootRegistry;
+
+                var settingsWindowViewModel = new SettingsViewModel();
+
+                await displayRootRegistry.ShowModalPresentation(settingsWindowViewModel);
             }
         }
     }

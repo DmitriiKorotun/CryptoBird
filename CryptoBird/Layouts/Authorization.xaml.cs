@@ -18,46 +18,58 @@ namespace CryptoBird.Layouts
     /// <summary>
     /// Логика взаимодействия для Authorization.xaml
     /// </summary>
-    public partial class Authorization : Window
+    public partial class Authorization : Window, ICloseable
     {
         public Authorization()
         {
             InitializeComponent();
         }
 
-        private void ToggleHeaderClick(object sender, RoutedEventArgs e)
+        //private void ToggleHeaderClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (((FrameworkElement)sender).DataContext is TabControlViewModel tabControlVM)
+        //    {
+        //        tabControlVM.TabHeaderVisible = !tabControlVM.TabHeaderVisible;
+        //    }
+        //}
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            if (((FrameworkElement)sender).DataContext is TabControlViewModel tabControlVM)
-            {
-                tabControlVM.TabHeaderVisible = !tabControlVM.TabHeaderVisible;
-            }
+            if (this.DataContext != null)
+            { ((dynamic)this.DataContext).Password = ((PasswordBox)sender).Password.ToString(); }
+        }
+
+        private void Lol_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //e.Handled = true;
+            //Lol.SelectedItem = Lol.Items[1];
         }
     }
 
-    public class TabControlViewModel : INotifyPropertyChanged
-    {
-        private bool _tabHeaderVisible = true;
+    //public class TabControlViewModel : INotifyPropertyChanged
+    //{
+    //    private bool _tabHeaderVisible = true;
 
-        public ICommand ToggleHeader
-        {
-            get; private set;
-        }
+    //    public ICommand ToggleHeader
+    //    {
+    //        get; private set;
+    //    }
 
-        public bool TabHeaderVisible
-        {
-            get { return _tabHeaderVisible; }
-            set
-            {
-                _tabHeaderVisible = value;
-                OnPropertyChanged("TabHeaderVisible");
-            }
-        }
+    //    public bool TabHeaderVisible
+    //    {
+    //        get { return _tabHeaderVisible; }
+    //        set
+    //        {
+    //            _tabHeaderVisible = value;
+    //            OnPropertyChanged("TabHeaderVisible");
+    //        }
+    //    }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+    //    public event PropertyChangedEventHandler PropertyChanged;
 
-        private void OnPropertyChanged(string name)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
-    }
+    //    private void OnPropertyChanged(string name)
+    //    {
+    //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    //    }
+    //}
 }
